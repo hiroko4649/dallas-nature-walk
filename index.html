@@ -5,204 +5,237 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ダラス散歩 — 花と鳥のデータベース</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --moss:#3d5e36;--sage:#6b9660;--sage-lt:#b4d4a4;--sage-bg:#eaf3e4;
-      --sky:#3570a8;--sky-lt:#9ec4e4;--sky-bg:#e4eff8;
-      --cream:#faf7f0;--warm:#f0ebe0;--ink:#252520;--mid:#505048;--muted:#7a7a6a;
-      --border:#ddd8cc;--shadow:rgba(50,50,30,.10);
+      --gd:#1e3a2f;--gm:#2d6a4f;--gl:#74c69d;--gp:#d8f3dc;
+      --bd:#1a3a5c;--bm:#2563a0;--bl:#90c8e8;--bp:#dbeafe;
+      --cream:#fefdf8;--warm:#f8f3e8;--text:#1a1a1a;--mid:#4a4a4a;--lt:#7a7a7a;--border:#e0d8cc;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Zen Maru Gothic',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;}
+    body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--text);line-height:1.7;}
 
-    header{background:linear-gradient(135deg,#2a4025 0%,var(--moss) 60%,#2d5535 100%);color:#fff;padding:1.6rem 1.5rem 1.3rem;text-align:center;position:relative;overflow:hidden;}
-    header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(255,255,255,.06) 0%,transparent 60%);}
-    header h1{font-family:'Lora',serif;font-size:clamp(1.1rem,3.5vw,1.5rem);font-weight:600;position:relative;}
-    header p{font-size:.75rem;opacity:.72;margin-top:.3rem;letter-spacing:.1em;text-transform:uppercase;position:relative;}
-    .header-stats{display:flex;justify-content:center;gap:1.2rem;margin-top:1rem;flex-wrap:wrap;position:relative;}
-    .stat-box{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:.5rem 1.1rem;text-align:center;}
-    .stat-num{font-size:1.4rem;font-weight:700;}
-    .stat-lbl{font-size:.65rem;opacity:.8;letter-spacing:.06em;}
+    /* HEADER */
+    header{background:linear-gradient(135deg,var(--gd) 0%,#2d5016 50%,#1a3a20 100%);padding:48px 40px 40px;position:relative;overflow:hidden;}
+    header::before{content:'🌿';position:absolute;font-size:200px;opacity:.06;right:-20px;top:-40px;}
+    header::after{content:'🐦';position:absolute;font-size:150px;opacity:.06;right:160px;bottom:-20px;}
+    .h-inner{max-width:1000px;margin:0 auto;position:relative;z-index:1;}
+    .h-tag{display:inline-block;background:rgba(116,198,157,.3);color:var(--gl);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:14px;}
+    header h1{font-family:'Lora',serif;font-size:clamp(20px,4vw,32px);font-weight:700;color:#fff;line-height:1.4;margin-bottom:10px;}
+    .h-sub{color:var(--gl);font-size:13px;font-weight:300;letter-spacing:1px;}
+    .h-stats{display:flex;gap:20px;margin-top:20px;flex-wrap:wrap;}
+    .stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 20px;text-align:center;}
+    .stat-n{font-size:22px;font-weight:900;color:#fff;}
+    .stat-l{font-size:11px;color:var(--gl);letter-spacing:1px;}
 
-    .tab-bar{display:flex;max-width:900px;margin:1.4rem auto 0;padding:0 1.1rem;gap:.6rem;}
-    .tab{flex:1;padding:.6rem 1rem;border-radius:10px;border:2px solid var(--sage);background:#fff;color:var(--sage);font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .18s;}
-    .tab:hover{background:var(--sage-bg);}
-    .tab.active{background:var(--sage);color:#fff;}
-    .tab.bird-tab{border-color:var(--sky);color:var(--sky);}
-    .tab.bird-tab:hover{background:var(--sky-bg);}
-    .tab.bird-tab.active{background:var(--sky);color:#fff;}
+    /* NAV */
+    nav{background:var(--gd);padding:0 40px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2);}
+    nav ul{max-width:1000px;margin:0 auto;list-style:none;display:flex;}
+    nav a{display:block;padding:13px 20px;color:var(--gl);text-decoration:none;font-size:13px;font-weight:500;letter-spacing:.5px;border-bottom:2px solid transparent;transition:all .2s;}
+    nav a:hover{color:#fff;border-bottom-color:var(--gl);}
+    .nav-add{margin-left:auto;background:rgba(116,198,157,.25);border-radius:6px;margin-top:6px;margin-bottom:6px;}
+    .nav-add a{border-bottom:none!important;padding:7px 16px!important;}
+    .nav-add a:hover{background:rgba(116,198,157,.4);}
 
-    .toolbar{max-width:900px;margin:.9rem auto 0;padding:0 1.1rem;display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap;}
-    .count-lbl{font-size:.82rem;color:var(--muted);font-style:italic;}
-    .toolbar-right{display:flex;gap:.5rem;align-items:center;}
-    .add-btn{background:var(--moss);color:#fff;border:none;padding:.52rem 1.1rem;border-radius:8px;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;transition:background .18s;}
-    .add-btn:hover{background:var(--sage);}
-    .reseed-btn{background:#fff3cd;color:#7a5a00;border:1.5px solid #d4a017;padding:.42rem .9rem;border-radius:8px;font-family:inherit;font-size:.78rem;font-weight:700;cursor:pointer;transition:background .15s;}
-    .reseed-btn:hover{background:#ffe9a0;}
+    /* MAIN */
+    main{max-width:1000px;margin:0 auto;padding:32px 20px 80px;}
 
-    .cards{max-width:900px;margin:1rem auto 3rem;padding:0 1.1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.1rem;}
-    .card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px var(--shadow);border:1px solid var(--border);border-top:4px solid var(--sage);transition:transform .2s,box-shadow .2s;animation:fadeUp .3s ease both;}
-    .card.bird{border-top-color:var(--sky);}
-    .card:hover{transform:translateY(-3px);box-shadow:0 6px 22px rgba(50,50,30,.14);}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+    /* SECTION HEAD */
+    .sec-head{display:flex;align-items:center;gap:14px;margin:44px 0 24px;padding-bottom:12px;border-bottom:3px solid;}
+    .sec-head.fl{border-color:var(--gm);}
+    .sec-head.bi{border-color:var(--bm);}
+    .sec-icon{font-size:32px;}
+    .sec-tw h2{font-size:22px;font-weight:700;}
+    .sec-head.fl .sec-tw h2{color:var(--gd);}
+    .sec-head.bi .sec-tw h2{color:var(--bd);}
+    .sec-tw p{font-size:12px;color:var(--lt);letter-spacing:1px;margin-top:2px;}
+    .count-badge{margin-left:auto;font-weight:700;font-size:13px;padding:6px 16px;border-radius:20px;}
+    .fl .count-badge{background:var(--gp);color:var(--gd);}
+    .bi .count-badge{background:var(--bp);color:var(--bd);}
 
-    .photo-wrap{position:relative;width:100%;height:175px;background:var(--sage-bg);overflow:hidden;}
-    .card.bird .photo-wrap{background:var(--sky-bg);}
+    /* CARDS */
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+    .card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);border-top:4px solid;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+    .card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.1);}
+    .card.flower{border-top-color:var(--gm);}
+    .card.bird{border-top-color:var(--bm);}
+
+    /* PHOTO */
+    .photo-wrap{position:relative;width:100%;height:200px;overflow:hidden;background:#f0f0f0;}
+    .card.flower .photo-wrap{background:var(--gp);}
+    .card.bird   .photo-wrap{background:var(--bp);}
     .photo-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
     .card:hover .photo-wrap img{transform:scale(1.04);}
-    .photo-placeholder{width:100%;height:175px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;}
-    .photo-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.38);color:#fff;border:none;border-radius:50%;width:28px;height:28px;font-size:.85rem;cursor:pointer;display:none;align-items:center;justify-content:center;}
-    .photo-nav.prev{left:5px;}
-    .photo-nav.next{right:5px;}
+    .photo-placeholder{width:100%;height:200px;display:flex;align-items:center;justify-content:center;font-size:4rem;}
+    .photo-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;border-radius:50%;width:30px;height:30px;font-size:.9rem;cursor:pointer;display:none;align-items:center;justify-content:center;}
+    .photo-nav.prev{left:6px;}
+    .photo-nav.next{right:6px;}
     .photo-wrap:hover .photo-nav{display:flex;}
-    .photo-counter{position:absolute;bottom:5px;right:7px;background:rgba(0,0,0,.5);color:#fff;font-size:.65rem;padding:2px 7px;border-radius:10px;}
+    .photo-counter{position:absolute;bottom:6px;right:8px;background:rgba(0,0,0,.5);color:#fff;font-size:.65rem;padding:2px 8px;border-radius:10px;}
 
-    .card-body{padding:.85rem 1rem .75rem;}
-    .card-badge{display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.18rem .5rem;border-radius:4px;margin-bottom:.3rem;background:var(--sage-bg);color:var(--moss);}
-    .card.bird .card-badge{background:var(--sky-bg);color:var(--sky);}
-    .card-jp{font-size:1.05rem;font-weight:700;line-height:1.3;color:var(--moss);}
-    .card.bird .card-jp{color:#1c4a7a;}
-    .card-en{font-family:'Lora',serif;font-style:italic;font-size:.82rem;color:var(--muted);margin-top:.1rem;}
-    .card-sci{font-family:'Lora',serif;font-style:italic;font-size:.72rem;color:#aaa;}
+    /* CARD CONTENT */
+    .card-header{padding:16px 18px 12px;border-bottom:1px solid var(--border);}
+    .card-en{font-family:'Lora',sans-serif;font-weight:700;font-size:14px;color:var(--text);margin-bottom:3px;}
+    .card-ja{font-size:16px;font-weight:700;margin-bottom:4px;}
+    .card.flower .card-ja{color:var(--gd);}
+    .card.bird   .card-ja{color:var(--bd);}
+    .card-sci{font-style:italic;font-size:11px;color:var(--lt);}
+    .card-body{padding:14px 18px 16px;}
+    .info-row{display:flex;gap:8px;margin-bottom:7px;font-size:13px;align-items:flex-start;}
+    .info-lbl{flex-shrink:0;font-weight:700;font-size:11px;letter-spacing:.5px;padding:2px 8px;border-radius:4px;margin-top:1px;white-space:nowrap;}
+    .card.flower .info-lbl{background:var(--gp);color:var(--gd);}
+    .card.bird   .info-lbl{background:var(--bp);color:var(--bd);}
+    .info-txt{color:var(--mid);line-height:1.6;}
+    .card-hl{margin-top:10px;padding:9px 13px;border-radius:8px;font-size:12px;line-height:1.6;}
+    .card.flower .card-hl{background:var(--gp);color:var(--gd);}
+    .card.bird   .card-hl{background:var(--bp);color:var(--bd);}
+    .tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
+    .tag{font-size:10px;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.5px;}
+    .t-origin{background:#fff3cd;color:#856404;}
+    .t-texas{background:#d4edda;color:#155724;}
+    .t-japan{background:#fce4ec;color:#880e4f;}
+    .t-edible{background:#e8f5e9;color:#1b5e20;}
+    .t-statbird{background:#e3f2fd;color:#0d47a1;}
+    .t-invasive{background:#ffebee;color:#b71c1c;}
+    .t-default{background:var(--warm);color:var(--mid);}
+    .where-seen{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:12px;color:var(--lt);border-top:1px dashed var(--border);padding-top:9px;}
 
-    .info-section{margin-top:.6rem;}
-    .info-row{display:flex;gap:.5rem;margin-bottom:.38rem;font-size:.78rem;align-items:flex-start;line-height:1.55;}
-    .info-lbl{flex-shrink:0;font-size:.65rem;font-weight:700;letter-spacing:.03em;padding:.14rem .45rem;border-radius:4px;margin-top:.12rem;white-space:nowrap;background:var(--sage-bg);color:var(--moss);}
-    .card.bird .info-lbl{background:var(--sky-bg);color:var(--sky);}
-    .info-txt{color:var(--mid);}
-    .highlight-box{margin-top:.65rem;padding:.55rem .7rem;border-radius:8px;font-size:.75rem;line-height:1.6;}
-    .card:not(.bird) .highlight-box{background:var(--sage-bg);color:#2a4a22;}
-    .card.bird .highlight-box{background:var(--sky-bg);color:#1a3a60;}
-    .tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.55rem;}
-    .tag{font-size:.66rem;font-weight:700;padding:.2rem .6rem;border-radius:10px;background:var(--warm);color:var(--mid);border:1px solid var(--border);}
-    .card-meta{margin-top:.55rem;font-size:.75rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:.3rem .8rem;border-top:1px dashed var(--border);padding-top:.5rem;}
-    .card-memo{margin-top:.4rem;font-size:.77rem;color:var(--mid);border-left:2px solid var(--sage-lt);padding-left:.5rem;line-height:1.5;}
-    .card.bird .card-memo{border-color:var(--sky-lt);}
-    .card-actions{display:flex;gap:.4rem;margin-top:.65rem;}
-    .btn-edit,.btn-del{flex:1;padding:.32rem;border-radius:6px;border:none;cursor:pointer;font-size:.75rem;font-family:inherit;transition:background .15s;}
+    /* USER MEMO */
+    .user-memo{margin-top:8px;font-size:12px;color:#444;background:#fffde7;border-left:3px solid #f9c74f;padding:6px 10px;border-radius:4px;line-height:1.6;}
+    .date-added{font-size:11px;color:var(--lt);margin-top:4px;}
+
+    /* CARD ACTIONS */
+    .card-actions{display:flex;gap:6px;margin-top:10px;}
+    .btn-edit,.btn-del{flex:1;padding:5px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-family:inherit;transition:background .15s;}
     .btn-edit{background:var(--warm);color:var(--mid);}
-    .btn-edit:hover{background:#e4ddd0;}
+    .btn-edit:hover{background:#e8e0d0;}
     .btn-del{background:#fce8e8;color:#b00;}
     .btn-del:hover{background:#f8d0d0;}
+    .btn-del.hidden{display:none;}
 
     /* MODAL */
-    .modal-bg{display:none;position:fixed;inset:0;background:rgba(25,30,18,.55);backdrop-filter:blur(3px);z-index:200;align-items:center;justify-content:center;padding:1rem;}
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(20,30,20,.55);backdrop-filter:blur(3px);z-index:200;align-items:center;justify-content:center;padding:1rem;}
     .modal-bg.open{display:flex;}
-    .modal{background:var(--cream);border-radius:18px;padding:1.6rem 1.5rem 1.4rem;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.28);animation:modalIn .22s ease;}
-    @keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(8px);}to{opacity:1;transform:scale(1) translateY(0);}}
-    .modal h2{font-family:'Lora',serif;font-size:1.1rem;margin-bottom:1.1rem;color:var(--moss);}
-    .modal.bird-mode h2{color:var(--sky);}
-    .fsec{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:1rem 0 .5rem;padding-bottom:.25rem;border-bottom:1px solid var(--border);}
-    .frow2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
-    .fg{margin-bottom:.65rem;}
-    .fg label{display:block;font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:.25rem;letter-spacing:.04em;text-transform:uppercase;}
-    .fg input,.fg textarea,.fg select{width:100%;padding:.5rem .7rem;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-family:inherit;font-size:.87rem;color:var(--ink);outline:none;transition:border-color .18s;}
-    .fg input:focus,.fg textarea:focus{border-color:var(--sage);}
-    .bird-mode .fg input:focus,.bird-mode .fg textarea:focus{border-color:var(--sky);}
-    .fg textarea{min-height:62px;resize:vertical;line-height:1.55;}
-    /* Tags */
-    .tags-wrap{display:flex;flex-wrap:wrap;gap:.35rem;padding:.4rem .5rem;border:1.5px solid var(--border);border-radius:8px;background:#fff;min-height:38px;align-items:center;}
-    .tags-wrap input{border:none;outline:none;font-family:inherit;font-size:.85rem;flex:1;min-width:80px;background:transparent;padding:.1rem .2rem;}
-    .tag-chip{font-size:.72rem;background:var(--sage-bg);color:var(--moss);padding:.18rem .5rem;border-radius:10px;display:inline-flex;align-items:center;gap:.3rem;font-weight:700;}
-    .bird-mode .tag-chip{background:var(--sky-bg);color:var(--sky);}
-    .tag-chip button{background:none;border:none;cursor:pointer;font-size:.7rem;color:inherit;opacity:.7;padding:0;line-height:1;}
-    /* Extra info rows */
-    .extra-rows{display:flex;flex-direction:column;gap:.4rem;}
-    .extra-row{display:grid;grid-template-columns:120px 1fr auto;gap:.4rem;align-items:center;}
-    .extra-row input{padding:.42rem .6rem;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:.82rem;outline:none;}
-    .extra-row input:focus{border-color:var(--sage);}
-    /* Photos */
-    .photos-list{display:flex;flex-direction:column;gap:.4rem;}
-    .photo-row-f{display:flex;gap:.4rem;align-items:center;}
-    .photo-row-f input{flex:1;padding:.45rem .65rem;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:.82rem;outline:none;}
-    .photo-row-f input:focus{border-color:var(--sage);}
-    .btn-rm{background:#fce8e8;color:#b00;border:none;border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:.85rem;flex-shrink:0;}
-    .btn-add-row{background:var(--warm);color:var(--mid);border:1.5px dashed var(--border);border-radius:7px;padding:.4rem .8rem;font-family:inherit;font-size:.8rem;cursor:pointer;margin-top:.3rem;transition:background .15s;}
-    .btn-add-row:hover{background:#e4ddd0;}
-    /* Modal actions */
-    .modal-actions{display:flex;gap:.75rem;margin-top:1.2rem;}
-    .btn-save{flex:2;background:var(--moss);color:#fff;border:none;border-radius:9px;padding:.68rem;font-family:inherit;font-size:.98rem;font-weight:700;cursor:pointer;transition:background .18s;}
-    .btn-save:hover{background:var(--sage);}
-    .bird-mode .btn-save{background:var(--sky);}
-    .bird-mode .btn-save:hover{background:#4d8cc8;}
-    .btn-cancel{flex:1;background:var(--warm);color:var(--muted);border:none;border-radius:9px;padding:.68rem;font-family:inherit;font-size:.9rem;cursor:pointer;}
-    .btn-cancel:hover{background:#e4ddd0;}
+    .modal{background:var(--cream);border-radius:18px;padding:1.6rem 1.5rem 1.4rem;width:100%;max-width:500px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.28);animation:mIn .22s ease;}
+    @keyframes mIn{from{opacity:0;transform:scale(.95) translateY(8px);}to{opacity:1;transform:scale(1) translateY(0);}}
+    .modal h2{font-family:'Lora',serif;font-size:1.1rem;margin-bottom:1rem;color:var(--gd);}
+    .modal.bird-mode h2{color:var(--bd);}
+    .fsec{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lt);margin:1rem 0 .5rem;padding-bottom:.2rem;border-bottom:1px solid var(--border);}
+    .fr2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
+    .fg{margin-bottom:.6rem;}
+    .fg label{display:block;font-size:.73rem;font-weight:700;color:var(--lt);margin-bottom:.22rem;letter-spacing:.04em;text-transform:uppercase;}
+    .fg input,.fg textarea{width:100%;padding:.48rem .65rem;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-family:inherit;font-size:.87rem;color:var(--text);outline:none;transition:border-color .18s;}
+    .fg input:focus,.fg textarea:focus{border-color:var(--gm);}
+    .bird-mode .fg input:focus,.bird-mode .fg textarea:focus{border-color:var(--bm);}
+    .fg textarea{min-height:60px;resize:vertical;line-height:1.55;}
+    /* extra info */
+    .extra-rows{display:flex;flex-direction:column;gap:.35rem;}
+    .erow{display:grid;grid-template-columns:110px 1fr 26px;gap:.35rem;align-items:center;}
+    .erow input{padding:.42rem .55rem;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:.82rem;outline:none;}
+    .erow input:focus{border-color:var(--gm);}
+    /* photos */
+    .photos-list{display:flex;flex-direction:column;gap:.35rem;}
+    .prow{display:flex;gap:.35rem;align-items:center;}
+    .prow input{flex:1;padding:.42rem .6rem;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:.82rem;outline:none;}
+    .prow input:focus{border-color:var(--gm);}
+    .btn-rm{background:#fce8e8;color:#b00;border:none;border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:.8rem;flex-shrink:0;}
+    .btn-add-row{background:var(--warm);color:var(--mid);border:1.5px dashed var(--border);border-radius:7px;padding:.38rem .75rem;font-family:inherit;font-size:.78rem;cursor:pointer;margin-top:.25rem;}
+    .btn-add-row:hover{background:#e8e0d0;}
+    .modal-note{font-size:.75rem;color:var(--lt);background:#f5f5f0;border-radius:7px;padding:.5rem .7rem;margin-bottom:.5rem;line-height:1.5;}
+    /* tags */
+    .tags-wrap{display:flex;flex-wrap:wrap;gap:.3rem;padding:.38rem .5rem;border:1.5px solid var(--border);border-radius:8px;background:#fff;min-height:36px;align-items:center;}
+    .tags-wrap input{border:none;outline:none;font-family:inherit;font-size:.85rem;flex:1;min-width:80px;background:transparent;}
+    .tag-chip{font-size:.7rem;background:var(--gp);color:var(--gd);padding:.16rem .48rem;border-radius:10px;display:inline-flex;align-items:center;gap:.28rem;font-weight:700;}
+    .bird-mode .tag-chip{background:var(--bp);color:var(--bd);}
+    .tag-chip button{background:none;border:none;cursor:pointer;font-size:.68rem;color:inherit;opacity:.7;padding:0;}
+    /* modal actions */
+    .modal-actions{display:flex;gap:.7rem;margin-top:1.1rem;}
+    .btn-save{flex:2;background:var(--gm);color:#fff;border:none;border-radius:9px;padding:.65rem;font-family:inherit;font-size:.97rem;font-weight:700;cursor:pointer;transition:background .18s;}
+    .btn-save:hover{background:var(--gl);}
+    .bird-mode .btn-save{background:var(--bm);}
+    .bird-mode .btn-save:hover{background:#3d88cc;}
+    .btn-cancel{flex:1;background:var(--warm);color:var(--lt);border:none;border-radius:9px;padding:.65rem;font-family:inherit;font-size:.88rem;cursor:pointer;}
 
     /* CONFIRM */
-    .confirm-bg{display:none;position:fixed;inset:0;background:rgba(25,30,18,.6);z-index:300;align-items:center;justify-content:center;padding:1rem;}
-    .confirm-bg.open{display:flex;}
-    .confirm-box{background:#fff;border-radius:14px;padding:1.5rem;max-width:380px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.2);}
-    .confirm-box h3{font-size:1rem;margin-bottom:.6rem;}
-    .confirm-box p{font-size:.83rem;color:var(--muted);line-height:1.6;margin-bottom:1.1rem;}
-    .confirm-btns{display:flex;gap:.6rem;}
-    .btn-cy{flex:1;background:#d44;color:#fff;border:none;padding:.6rem;border-radius:8px;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;}
-    .btn-cn{flex:1;background:var(--warm);color:var(--mid);border:none;padding:.6rem;border-radius:8px;font-family:inherit;font-size:.9rem;cursor:pointer;}
+    .cfm-bg{display:none;position:fixed;inset:0;background:rgba(20,30,20,.6);z-index:300;align-items:center;justify-content:center;padding:1rem;}
+    .cfm-bg.open{display:flex;}
+    .cfm{background:#fff;border-radius:14px;padding:1.5rem;max-width:360px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.2);}
+    .cfm h3{font-size:.98rem;margin-bottom:.5rem;}
+    .cfm p{font-size:.82rem;color:var(--lt);line-height:1.6;margin-bottom:1rem;}
+    .cfm-btns{display:flex;gap:.55rem;}
+    .cfm-y{flex:1;background:#d44;color:#fff;border:none;padding:.55rem;border-radius:8px;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer;}
+    .cfm-n{flex:1;background:var(--warm);color:var(--mid);border:none;padding:.55rem;border-radius:8px;font-family:inherit;font-size:.88rem;cursor:pointer;}
 
-    .toast{position:fixed;bottom:1.6rem;right:1.6rem;background:var(--ink);color:#fff;padding:.6rem 1.2rem;border-radius:9px;font-size:.85rem;z-index:400;opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .28s,transform .28s;}
+    .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#1a1a1a;color:#fff;padding:.55rem 1.1rem;border-radius:9px;font-size:.83rem;z-index:400;opacity:0;pointer-events:none;transform:translateY(5px);transition:opacity .28s,transform .28s;}
     .toast.show{opacity:1;transform:translateY(0);}
-    .loading-state{grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--muted);font-style:italic;}
-    @media(max-width:480px){.cards{grid-template-columns:1fr;}.frow2{grid-template-columns:1fr;gap:0;}.extra-row{grid-template-columns:90px 1fr auto;}}
+
+    footer{text-align:center;padding:36px 20px;color:var(--lt);font-size:12px;border-top:1px solid var(--border);}
+    @media(max-width:520px){.cards{grid-template-columns:1fr;}.fr2{grid-template-columns:1fr;gap:0;}.erow{grid-template-columns:90px 1fr 26px;}}
   </style>
 </head>
 <body>
 
 <header>
-  <h1>🌿 ダラス散歩 花と鳥のデータベース</h1>
-  <p>Dallas Nature Walk · Flowers &amp; Birds</p>
-  <div class="header-stats">
-    <div class="stat-box"><div class="stat-num" id="st-f">—</div><div class="stat-lbl">花・植物</div></div>
-    <div class="stat-box"><div class="stat-num" id="st-b">—</div><div class="stat-lbl">鳥</div></div>
-    <div class="stat-box"><div class="stat-num" id="st-t">—</div><div class="stat-lbl">合計</div></div>
+  <div class="h-inner">
+    <div class="h-tag">Dallas Walk Diary</div>
+    <h1>あらがうアラ還の散歩日記<br>花・植物・鳥 完全記録</h1>
+    <div class="h-sub">Flowers, Plants &amp; Birds encountered on walks in Dallas Downtown &amp; surroundings</div>
+    <div class="h-stats">
+      <div class="stat"><div class="stat-n" id="st-f">22</div><div class="stat-l">花・植物</div></div>
+      <div class="stat"><div class="stat-n" id="st-b">5</div><div class="stat-l">鳥</div></div>
+      <div class="stat"><div class="stat-n" id="st-t">27</div><div class="stat-l">合計</div></div>
+    </div>
   </div>
 </header>
 
-<div class="tab-bar">
-  <button class="tab active"   id="tab-flower" onclick="switchTab('flower')">🌸 花・植物</button>
-  <button class="tab bird-tab" id="tab-bird"   onclick="switchTab('bird')">🐦 鳥</button>
-</div>
-<div class="toolbar">
-  <span class="count-lbl" id="count-lbl">読み込み中…</span>
-  <div class="toolbar-right">
-    <button class="reseed-btn" id="reseed-btn" onclick="offerReseed()">🔄 詳細データに更新</button>
-    <button class="add-btn" onclick="openModal()">＋ 追加</button>
-  </div>
-</div>
-<div class="cards" id="cards-container"><div class="loading-state">読み込み中…</div></div>
+<nav>
+  <ul>
+    <li><a href="#flowers">🌸 花・植物（22種）</a></li>
+    <li><a href="#birds">🐦 鳥（5種）</a></li>
+    <li class="nav-add"><a href="#" onclick="openModal('flower');return false;">＋ 花を追加</a></li>
+    <li class="nav-add"><a href="#" onclick="openModal('bird');return false;">＋ 鳥を追加</a></li>
+  </ul>
+</nav>
+
+<main id="main-content">
+  <div style="text-align:center;padding:3rem;color:var(--lt);font-style:italic;">読み込み中…</div>
+</main>
 
 <!-- MODAL -->
 <div class="modal-bg" id="modal-bg" onclick="bgClick(event)">
 <div class="modal" id="modal-inner">
   <h2 id="modal-title">🌸 新しい花を追加</h2>
+  <div class="modal-note" id="modal-note"></div>
+
   <div class="fsec">基本情報</div>
-  <div class="frow2">
-    <div class="fg"><label>日本語名 *</label><input id="f-jp" type="text" placeholder="例：サルスベリ"></div>
-    <div class="fg"><label>英語名 *</label><input id="f-en" type="text" placeholder="例：Crape Myrtle"></div>
+  <div class="fr2">
+    <div class="fg"><label>日本語名 *</label><input id="f-jp" type="text"></div>
+    <div class="fg"><label>英語名 *</label><input id="f-en" type="text"></div>
   </div>
-  <div class="fg"><label>学名</label><input id="f-sci" type="text" placeholder="例：Lagerstroemia indica"></div>
-  <div class="fg"><label>原産地・由来</label><input id="f-origin" type="text" placeholder="例：中国・東アジア"></div>
-  <div class="fg"><label>特徴</label><textarea id="f-features" placeholder="主な特徴を入力…"></textarea></div>
+  <div class="fg"><label>学名</label><input id="f-sci" type="text"></div>
+  <div class="fg"><label>原産地</label><input id="f-origin" type="text"></div>
+  <div class="fg"><label>特徴</label><textarea id="f-features"></textarea></div>
 
   <div class="fsec">追加情報（ラベル付き）</div>
   <div class="extra-rows" id="extra-rows"></div>
-  <button class="btn-add-row" onclick="addExtraRow()">＋ 情報行を追加</button>
+  <button class="btn-add-row" onclick="addErow()">＋ 情報行を追加</button>
 
   <div class="fsec">ハイライト・豆知識</div>
-  <div class="fg"><textarea id="f-highlight" placeholder="💡 ハイライト・豆知識など…"></textarea></div>
+  <div class="fg"><textarea id="f-highlight"></textarea></div>
 
   <div class="fsec">記録</div>
-  <div class="frow2">
+  <div class="fr2">
     <div class="fg"><label>見かけた日</label><input id="f-date" type="date"></div>
-    <div class="fg"><label>場所</label><input id="f-loc" type="text" placeholder="例：Pacific Plaza"></div>
+    <div class="fg"><label>場所</label><input id="f-loc" type="text"></div>
   </div>
-  <div class="fg"><label>メモ</label><textarea id="f-memo" style="min-height:48px" placeholder="その他…"></textarea></div>
+  <div class="fg"><label>メモ</label><textarea id="f-memo" style="min-height:48px"></textarea></div>
 
   <div class="fsec">タグ（Enterで追加）</div>
-  <div class="fg"><div class="tags-wrap" id="tags-wrap"><input id="tag-input" type="text" placeholder="例：テキサス原産" onkeydown="tagKeydown(event)"></div></div>
+  <div class="fg"><div class="tags-wrap" id="tags-wrap"><input id="tag-input" type="text" placeholder="例：テキサス原産" onkeydown="tagKD(event)"></div></div>
 
-  <div class="fsec">写真（Google Drive URL）</div>
+  <div class="fsec">写真（Google Drive URL・複数可）</div>
   <div class="photos-list" id="photos-list"></div>
-  <button class="btn-add-row" onclick="addPhotoRow()">＋ 写真URLを追加</button>
+  <button class="btn-add-row" onclick="addProw()">＋ 写真URLを追加</button>
 
   <div class="modal-actions">
     <button class="btn-cancel" onclick="closeModal()">キャンセル</button>
@@ -212,20 +245,20 @@
 </div>
 
 <!-- CONFIRM -->
-<div class="confirm-bg" id="confirm-bg">
-  <div class="confirm-box">
-    <h3 id="c-title">確認</h3>
-    <p id="c-msg"></p>
-    <div class="confirm-btns">
-      <button class="btn-cn" onclick="closeConfirm()">キャンセル</button>
-      <button class="btn-cy" id="c-yes">実行する</button>
+<div class="cfm-bg" id="cfm-bg">
+  <div class="cfm">
+    <h3 id="cfm-title">確認</h3>
+    <p id="cfm-msg"></p>
+    <div class="cfm-btns">
+      <button class="cfm-n" onclick="closeCfm()">キャンセル</button>
+      <button class="cfm-y" id="cfm-yes">実行する</button>
     </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import { getDatabase,ref,push,onValue,remove,update,set,get,child }
   from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
 
@@ -241,205 +274,182 @@ const app = initializeApp({
 });
 const db = getDatabase(app);
 
-/* =========================================================
-   SEED DATA — 花22種・鳥5種（完全版）
-   extraInfo: [{label, text}] で各カードの独自ラベル行を保存
-   ========================================================= */
-const SEED_FLOWERS = [
-{jp:"ヒトツバタゴ（ナンジャモンジャ）",en:"Chinese Fringe Tree",sci:"Chionanthus retusus",
- origin:"中国・東アジア（日本・朝鮮半島にも自生）",
- features:"春に白いふわふわとした房状の花を咲かせる落葉樹。花が散ると雪が降ったように見える。",
- extraInfo:[{label:"日本名の由来",text:"「ナンジャモンジャ」の愛称は「これは何という木じゃ？」という驚きから来ている日本各地の地域的な呼び名。"}],
- highlight:"東京・日比谷公園の「ナンジャモンジャの木」が有名。ダラスではPacific Plazaなど公園の植栽に使われている。",
- location:"ダウンタウン散歩中",tags:[],photos:[],date:"",memo:""},
+/* ================================================================
+   HARDCODED BASE DATA — 常にHTMLに内蔵（Firebaseに依存しない）
+   ================================================================ */
+const BASE = [
+  {id:'f00',cat:'flower',
+   en:'Chinese Fringe Tree',jp:'ヒトツバタゴ（ナンジャモンジャ）',sci:'Chionanthus retusus',
+   rows:[{l:'原産',t:'中国・東アジア（日本・朝鮮半島にも自生）'},{l:'特徴',t:'春に白いふわふわとした房状の花を咲かせる落葉樹。花が散ると雪が降ったように見える'},{l:'日本名の由来',t:'「ナンジャモンジャ」の愛称は「これは何という木じゃ？」という驚きから来ている日本各地の地域的な呼び名'}],
+   hl:'東京・日比谷公園の「ナンジャモンジャの木」が有名。ダラスではPacific Plazaなど公園の植栽に使われている',
+   where:'ダウンタウン散歩中',tags:[]},
 
-{jp:"ロッキーオダマキ",en:"Blue Rocky Mountain Columbine",sci:"Aquilegia caerulea",
- origin:"コロラド州・ロッキー山脈地域",
- features:"青と白のツートンカラーが美しい。花びらの後ろに長い距（きょ）がある独特の形。",
- extraInfo:[{label:"コロラド州の州花",text:"コロラド州の公式の州花として保護されている。"},{label:"ダラスでは",text:"ダラスの夏の高温は苦手。春の涼しい時期のみ見られる。"}],
- highlight:"",location:"ダウンタウン散歩中",tags:[],photos:[],date:"",memo:""},
+  {id:'f01',cat:'flower',
+   en:'Blue Rocky Mountain Columbine',jp:'ロッキーオダマキ',sci:'Aquilegia caerulea',
+   rows:[{l:'原産',t:'コロラド州・ロッキー山脈地域'},{l:'特徴',t:'青と白のツートンカラーが美しい。花びらの後ろに長い距（きょ）がある独特の形'},{l:'コロラド州の州花',t:'コロラド州の公式の州花として保護されている'},{l:'ダラスでは',t:'ダラスの夏の高温は苦手。春の涼しい時期のみ見られる'}],
+   hl:'',where:'ダウンタウン散歩中',tags:[]},
 
-{jp:"マンデビラ",en:"Mandevilla / Dipladenia / Brazilian Jasmine",sci:"Mandevilla spp.",
- origin:"中南米（ブラジル・メキシコ）",
- features:"つる性の植物。白・ピンク・赤・複色など豊富。暑さに非常に強くダラスの夏の定番。",
- extraInfo:[{label:"名前の整理",text:"Mandevilla（現正式属名）＝Dipladenia（旧名・今も使われる）＝Brazilian Jasmine（英語通称）。全て同じ植物。"}],
- highlight:"本物のジャスミン（モクセイ科）とは全く別の植物。中南米原産なのでBrazilian Jasmineと呼ばれる。",
- location:"Ruibal's Garden（ファーマーズマーケット前）",tags:["熱帯系"],photos:[],date:"",memo:""},
+  {id:'f02',cat:'flower',
+   en:'Mandevilla / Dipladenia / Brazilian Jasmine',jp:'マンデビラ',sci:'Mandevilla spp.',
+   rows:[{l:'原産',t:'中南米（ブラジル・メキシコ）'},{l:'名前の整理',t:'Mandevilla（現正式属名）＝Dipladenia（旧名）＝Brazilian Jasmine（英語通称）。全て同じ植物'},{l:'特徴',t:'つる性の植物。白・ピンク・赤・複色など豊富。暑さに非常に強くダラスの夏の定番'}],
+   hl:'本物のジャスミン（モクセイ科）とは全く別の植物。中南米原産なのでBrazilian Jasmineと呼ばれる',
+   where:"Ruibal's Garden（ファーマーズマーケット前）",tags:['熱帯系']},
 
-{jp:"マンデビラ「赤ずきんちゃん」品種",en:"Monrovia Red Riding Hood Mandevilla",sci:"Mandevilla sanderi 'Red Riding Hood'",
- origin:"",
- features:"濃いピンク色の花に黄色い中心部。「赤ずきんちゃん」という名前通りの鮮やかな色。",
- extraInfo:[{label:"育種",text:"カリフォルニアのMonrovia社（Lowe'sでよく扱う高品質ブランド）が開発した品種。"},{label:"発見場所",text:"Lowe'sのサイトで名前を確認。"}],
- highlight:"",location:"散歩中",tags:[],photos:[],date:"",memo:""},
+  {id:'f03',cat:'flower',
+   en:'Monrovia Red Riding Hood Mandevilla',jp:"マンデビラ「赤ずきんちゃん」品種",sci:"Mandevilla 'Red Riding Hood'",
+   rows:[{l:'育種',t:"カリフォルニアのMonrovia社（Lowe'sでよく扱う高品質ブランド）が開発した品種"},{l:'特徴',t:'濃いピンク色の花に黄色い中心部。「赤ずきんちゃん」という名前通りの鮮やかな色'},{l:'発見場所',t:"Lowe'sのサイトで名前を確認"}],
+   hl:'',where:'散歩中',tags:[]},
 
-{jp:"アンゲロニア",en:"Angelonia / Summer Snapdragon",sci:"Angelonia salicariifolia",
- origin:"メキシコ・中米・熱帯アメリカ",
- features:"茎の先端から下から上へと順番に小さな花が咲いていく。葉に触れるとグレープのような甘い香り。花色は紫・ピンク・白など。",
- extraInfo:[{label:"別名",text:"Summer Snapdragon（夏のスナップドラゴン）。"},{label:"最初の観察",text:"白い小さな花が「水滴のよう」に見えた→まだつぼみの状態だった可能性大。茎全体に咲き揃うと全く違う印象になる。"}],
- highlight:"ダラスの夏の猛暑に非常に強い。今（5月）の植え付けシーズンから秋まで咲き続ける優秀な夏の花。",
- location:"ダウンタウン散歩中",tags:["夏に強い"],photos:[],date:"",memo:""},
+  {id:'f04',cat:'flower',
+   en:'Angelonia / Summer Snapdragon',jp:'アンゲロニア',sci:'Angelonia salicariifolia',
+   rows:[{l:'原産',t:'メキシコ・中米・熱帯アメリカ'},{l:'別名',t:'Summer Snapdragon（夏のスナップドラゴン）'},{l:'特徴',t:'茎の先端から下から上へと順番に小さな花が咲いていく。葉に触れるとグレープのような甘い香り。花色は紫・ピンク・白など'},{l:'最初の観察',t:'白い小さな花が「水滴のよう」に見えた→まだつぼみの状態だった可能性大。茎全体に咲き揃うと全く違う印象になる'}],
+   hl:'ダラスの夏の猛暑に非常に強い。今（5月）の植え付けシーズンから秋まで咲き続ける優秀な夏の花',
+   where:'ダウンタウン散歩中',tags:[]},
 
-{jp:"カシワバアジサイ（柏葉紫陽花）",en:"Oakleaf Hydrangea",sci:"Hydrangea quercifolia",
- origin:"アメリカ南東部（テキサス・ジョージア・アラバマなど）が原産地",
- features:"カシワの葉に似た大きな葉。花は白い円錐形（縦長）。秋には紅葉も楽しめる。テキサスの猛暑・乾燥に強い。",
- extraInfo:[{label:"ダラスで多い理由",text:"もともと南東部が故郷なのでダラスの気候はほぼ「故郷」。MopheadよりもOakleafの方がダラスに圧倒的に向いている。"}],
- highlight:"Pacific Plazaに茂みとして植えられている。その中に1〜2株のMophead Hydrangea（ピンク）が混じっているのをHirokoさんが発見！設計者の意図的なアクセント植栽の可能性。",
- location:"Pacific Plaza・ダウンタウン各所",tags:["テキサス向き"],photos:[],date:"",memo:""},
+  {id:'f05',cat:'flower',
+   en:'Oakleaf Hydrangea',jp:'カシワバアジサイ（柏葉紫陽花）',sci:'Hydrangea quercifolia',
+   rows:[{l:'原産',t:'アメリカ南東部（テキサス・ジョージア・アラバマなど）が原産地'},{l:'特徴',t:'カシワの葉に似た大きな葉。花は白い円錐形（縦長）。秋には紅葉も楽しめる。テキサスの猛暑・乾燥に強い'},{l:'ダラスで多い理由',t:"もともと南東部が故郷なのでダラスの気候はほぼ「故郷」。MopheadよりもOakleafの方がダラスに圧倒的に向いている"}],
+   hl:'Pacific Plazaに茂みとして植えられている。その中に1〜2株のMophead Hydrangea（ピンク）が混じっているのをHirokoさんが発見！設計者の意図的なアクセント植栽の可能性',
+   where:'Pacific Plaza・ダウンタウン各所',tags:['テキサス向き']},
 
-{jp:"セイヨウアジサイ（西洋紫陽花）",en:"Mophead Hydrangea",sci:"Hydrangea macrophylla",
- origin:"日本原産のアジサイ（ガクアジサイ）がヨーロッパに渡り品種改良→日本に逆輸入",
- features:"丸くてゴージャスなMophead。ヨーロッパの温暖湿潤な気候向けに品種改良されたため、ダラスの猛暑には弱い。日陰で管理された場所でのみ生存可能。",
- extraInfo:[{label:"名前の由来",text:"「Mophead（モップヘッド）」＝モップのようにもこもこと丸く花が集まる形から。"},{label:"ダラスとの相性",text:"ヨーロッパの温暖湿潤な気候向けに品種改良されたため、ダラスの猛暑には弱い。"}],
- highlight:"「日本の紫陽花のように丸い」と感じたのは正確！元をたどれば日本原産。今の日本の梅雨時に街中で見る丸いあじさいはほとんどがこのMophead。",
- location:"Pacific Plaza（Oakleafの茂みの中に少数）",tags:["日本原産→逆輸入"],photos:[],date:"",memo:""},
+  {id:'f06',cat:'flower',
+   en:'Mophead Hydrangea',jp:'セイヨウアジサイ（西洋紫陽花）',sci:'Hydrangea macrophylla',
+   rows:[{l:'原産の経緯',t:'日本原産のアジサイ（ガクアジサイ）がヨーロッパに渡り品種改良→丸くてゴージャスなMopheadが誕生→日本に逆輸入されて「西洋紫陽花」に'},{l:'名前の由来',t:'「Mophead（モップヘッド）」＝モップのようにもこもこと丸く花が集まる形から'},{l:'ダラスとの相性',t:'ヨーロッパの温暖湿潤な気候向けに品種改良されたため、ダラスの猛暑には弱い。日陰で管理された場所でのみ生存可能'}],
+   hl:'「日本の紫陽花のように丸い」と感じたのは正確！元をたどれば日本原産。今の日本の梅雨時に街中で見る丸いあじさいはほとんどがこのMophead',
+   where:'Pacific Plaza（Oakleafの茂みの中に少数）',tags:['日本原産→逆輸入']},
 
-{jp:"ヘメロカリス",en:"Daylily",sci:"Hemerocallis spp.",
- origin:"東アジア（中国・日本・朝鮮半島）",
- features:"一輪の花は一日しか咲かないが次々と新しい花が咲くため長期間楽しめる。",
- extraInfo:[{label:"名前の意味",text:"Hemerocallis＝ギリシャ語で「一日の美しさ」。"},{label:"日本の仲間",text:"ニッコウキスゲ・ノカンゾウ・ヤブカンゾウなどが日本の在来種。日本の野山でも見られる。"},{label:"ダラスとの相性",text:"暑さ・乾燥に非常に強い。ローメンテナンスで育てやすく街路や公園の定番。"}],
- highlight:"黄色い花で発見。東アジア原産だが品種改良が進み世界中で親しまれている。",
- location:"ダウンタウン散歩中",tags:["東アジア原産"],photos:[],date:"",memo:""},
+  {id:'f07',cat:'flower',
+   en:'Daylily',jp:'ヘメロカリス',sci:'Hemerocallis spp.',
+   rows:[{l:'原産',t:'東アジア（中国・日本・朝鮮半島）'},{l:'名前の意味',t:'Hemerocallis＝ギリシャ語で「一日の美しさ」。一輪の花は一日しか咲かないが次々と新しい花が咲くため長期間楽しめる'},{l:'日本の仲間',t:'ニッコウキスゲ・ノカンゾウ・ヤブカンゾウなどが日本の在来種。日本の野山でも見られる'},{l:'ダラスとの相性',t:'暑さ・乾燥に非常に強い。ローメンテナンスで育てやすく街路や公園の定番'}],
+   hl:'黄色い花で発見。東アジア原産だが、品種改良が進み世界中で親しまれている',
+   where:'ダウンタウン散歩中',tags:['東アジア原産']},
 
-{jp:"サルビア「ミスティックスパイアーズ」",en:"Mystic Spires Blue Salvia",sci:"Salvia 'Mystic Spires Blue'",
- origin:"",
- features:"鮮やかな青紫色の花穂がすらりと縦に伸びる。高さ60〜90cm。春から霜が降りるまで長期間咲き続ける。ハチドリ・蝶を引き寄せる。",
- extraInfo:[{label:"育種",text:"Monrovia社（Red Riding Hood Mandevillaと同じブランド）が開発したサルビアの品種。"}],
- highlight:"HarwoodパークでArtemisia（ヨモギ属・グリーンの葉）との組み合わせで植栽されている。緑の葉から青紫の花穂がすっと伸びるシンプルで洗練された組み合わせ。",
- location:"Harwood Park",tags:["テキサス向き"],photos:[],date:"",memo:""},
+  {id:'f08',cat:'flower',
+   en:"Mystic Spires Blue Salvia",jp:"サルビア「ミスティック・スパイアーズ・ブルー」",sci:"Salvia 'Mystic Spires Blue'",
+   rows:[{l:'育種',t:'Monrovia社（Red Riding Hood Mandevillaと同じブランド）が開発したサルビアの品種'},{l:'特徴',t:'鮮やかな青紫色の花穂がすらりと縦に伸びる。高さ60〜90cm。春から霜が降りるまで長期間咲き続ける'},{l:'ダラスとの相性',t:'暑さ・乾燥に非常に強い。ハチドリ・蝶を引き寄せる'}],
+   hl:'HarwoodパークでArtemisia（ヨモギ属・グリーンの葉）との組み合わせで植栽されている。緑の葉から青紫の花穂がすっと伸びるシンプルで洗練された組み合わせ',
+   where:'Harwood Park',tags:['テキサス向き']},
 
-{jp:"オータムセージ",en:"Autumn Sage",sci:"Salvia greggii",
- origin:"メキシコ・テキサス西部",
- features:"春〜初夏に咲き、真夏は少し休み、秋に再び咲く二回咲き。赤が最も一般的。他にピンク・サーモン・白・紫など多数の品種。",
- extraInfo:[{label:"名前の整理",text:"Salvia greggii（学名）＝Autumn Sage（英語一般名）。同じ植物。"},{label:"開花パターン",text:"「Autumn（秋）」という名前だが春も咲くお得な植物。"}],
- highlight:"Mexican Bush Sageと一緒に植えられることが多い。Autumn Sageが春に赤く咲く時、秋になるとMexican Bush Sageが紫に咲き、Autumn Sageも赤く再び咲いて「赤×紫」の競演に！",
- location:"ダウンタウン各所・公園",tags:["テキサス原産"],photos:[],date:"",memo:""},
+  {id:'f09',cat:'flower',
+   en:'Autumn Sage / Salvia Greggii',jp:'サルビア・グレッギー（オータムセージ）',sci:'Salvia greggii',
+   rows:[{l:'原産',t:'メキシコ・テキサス西部'},{l:'名前の整理',t:'Salvia greggii（学名）＝Autumn Sage（英語一般名）。同じ植物'},{l:'開花パターン',t:'春〜初夏に咲き、真夏は少し休み、秋に再び咲く二回咲き。「Autumn（秋）」という名前だが春も咲くお得な植物'},{l:'花色',t:'赤が最も一般的。他にピンク・サーモン・白・紫など多数の品種'}],
+   hl:'Mexican Bush Sageと一緒に植えられることが多い。Autumn Sageが春に赤く咲く時、秋になるとMexican Bush Sageが紫に咲き、Autumn Sageも赤く再び咲いて「赤×紫」の競演に！',
+   where:'ダウンタウン各所・公園',tags:['テキサス原産']},
 
-{jp:"メキシカンブッシュセージ",en:"Mexican Bush Sage",sci:"Salvia leucantha",
- origin:"メキシコ・中米の熱帯・亜熱帯地域",
- features:"紫のふわふわした花穂が美しい。秋〜初冬が本番の開花期。",
- extraInfo:[{label:"開花パターン",text:"春〜夏は葉が茂るだけで花はほぼ咲かない。秋になると「わっと」咲く。今（5月）は準備中。"}],
- highlight:"Autumn Sageとペアで植えられる「ダラス定番コンビ」。設計者の計算された植栽で、春と秋に交互に主役が入れ替わるよう設計されている。",
- location:"ダウンタウン各所",tags:[],photos:[],date:"",memo:""},
+  {id:'f10',cat:'flower',
+   en:'Mexican Bush Sage',jp:'メキシカン・ブッシュセージ',sci:'Salvia leucantha',
+   rows:[{l:'原産',t:'メキシコ・中米の熱帯・亜熱帯地域'},{l:'開花パターン',t:'春〜夏は葉が茂るだけで花はほぼ咲かない。秋〜初冬が本番の開花期。紫のふわふわした花穂が美しい'},{l:'5月時点',t:'画像検索で出るような「わんさか咲いている状態」ではなく少ししか咲いていない→秋になると「わっと」咲く。今は準備中'}],
+   hl:"Autumn Sageとペアで植えられる「ダラス定番コンビ」。設計者の計算された植栽で、春と秋に交互に主役が入れ替わるよう設計されている",
+   where:'ダウンタウン各所',tags:[]},
 
-{jp:"ヒャクニチソウ（百日草）",en:"Zinnia",sci:"Zinnia elegans",
- origin:"メキシコ",
- features:"オレンジ・黄色・赤・ピンク・白など鮮やか。種から育てやすく直射日光が大好き。",
- extraInfo:[{label:"名前の由来",text:"「百日草」＝百日間（約3ヶ月）咲き続けるほど花期が長いことから。"},{label:"ダリアとの関係",text:"見た目が似ているが別属。どちらもキク科・メキシコ原産という共通点あり。"}],
- highlight:"メキシコ原産なのでダラスの夏に非常に強い。今（5月）から植えて夏中楽しめる。ヒマワリ・コスモスと同じキク科。",
- location:"Ruibal's Garden",tags:["メキシコ原産","夏に強い"],photos:[],date:"",memo:""},
+  {id:'f11',cat:'flower',
+   en:'Zinnia',jp:'ヒャクニチソウ（百日草）',sci:'Zinnia elegans',
+   rows:[{l:'原産',t:'メキシコ'},{l:'名前の由来',t:'「百日草」＝百日間（約3ヶ月）咲き続けるほど花期が長いことから'},{l:'特徴',t:'オレンジ・黄色・赤・ピンク・白など鮮やか。種から育てやすく直射日光が大好き'},{l:'ダリアとの関係',t:'見た目が似ているが別属。どちらもキク科・メキシコ原産という共通点あり。花の構造（中心に筒状花・外側に舌状花）がキク科共通'}],
+   hl:'メキシコ原産なのでダラスの夏に非常に強い。今（5月）から植えて夏中楽しめる。ヒマワリ・コスモスと同じキク科',
+   where:"Ruibal's Garden",tags:['メキシコ原産','夏に強い']},
 
-{jp:"アルテミシア（ヨモギ属）",en:"Artemisia",sci:"Artemisia spp.",
- origin:"北半球各地（世界中に分布）",
- features:"葉を楽しむ植物。花は非常に小さく目立たない（観賞価値ほぼなし）。",
- extraInfo:[{label:"用途",text:"葉の色・質感のアクセントとして植栽に使われる。Mystic Spiresとの組み合わせが定番。"},{label:"仲間たち",text:"ヨモギ（草餅・お灸のもぐさ）・タラゴン（フランス料理のハーブ）・ワームウッド（苦味酒アブサンの原料）も同じ属。"}],
- highlight:"HarwoodパークでMystic Spiresとコンビで植栽されている。緑の葉の中から青紫の花穂が伸びる洗練されたデザイン。",
- location:"Harwood Park",tags:[],photos:[],date:"",memo:""},
+  {id:'f12',cat:'flower',
+   en:'Artemisia',jp:'ヨモギ属',sci:'Artemisia spp.',
+   rows:[{l:'特徴',t:'「春菊のようなデイジーの葉のような植物」→葉を楽しむ植物。花は非常に小さく目立たない（観賞価値ほぼなし）'},{l:'用途',t:'葉の色・質感のアクセントとして植栽に使われる。Mystic Spiresとの組み合わせが定番'},{l:'仲間たち',t:'ヨモギ（草餅・お灸のもぐさ）・タラゴン（フランス料理のハーブ）・ワームウッド（苦味酒アブサンの原料）も同じ属'}],
+   hl:'HarwoodパークでMystic Spiresとコンビで植栽されている。緑の葉の中から青紫の花穂が伸びる洗練されたデザイン',
+   where:'Harwood Park',tags:[]},
 
-{jp:"ケイトウ（鶏頭）",en:"Celosia / Cockscomb",sci:"Celosia argentea",
- origin:"熱帯アジア・アフリカ",
- features:"花の形が鶏のトサカ（鶏冠）に似る。",
- extraInfo:[{label:"名前の由来",text:"「鶏頭（ケイトウ）」＝鶏のトサカに似る。英語のCockscomb（コックスコーム）も同じ意味。"},{label:"種類",text:"Cristata（トサカ型）・Plumosa（羽毛状）・Spicata（細長い穂状）などのタイプがある。"},{label:"日本との縁",text:"日本ではお盆の仏花として定番。Globe Amaranth（センニチコウ）とお盆コンビとして親しまれている。"}],
- highlight:"Ruibal'sで赤と黄色のCelosiaを発見。ダラスの夏の猛暑に非常に強い。",
- location:"Ruibal's Garden",tags:[],photos:[],date:"",memo:""},
+  {id:'f13',cat:'flower',
+   en:'Celosia / Cockscomb',jp:'ケイトウ（鶏頭）',sci:'Celosia argentea',
+   rows:[{l:'名前の由来',t:'「鶏頭（ケイトウ）」＝花の形が鶏のトサカ（鶏冠）に似る。英語のCockscomb（コックスコーム）も同じ意味'},{l:'種類',t:'Cristata（トサカ型）・Plumosa（羽毛状）・Spicata（細長い穂状）などのタイプがある'},{l:'日本との縁',t:'日本ではお盆の仏花として定番。Globe Amaranth（センニチコウ）とお盆コンビとして親しまれている'}],
+   hl:"Ruibal'sで赤と黄色のCelosiaを発見。ダラスの夏の猛暑に非常に強い",
+   where:"Ruibal's Garden",tags:[]},
 
-{jp:"センニチコウ（千日紅）",en:"Globe Amaranth",sci:"Gomphrena globosa",
- origin:"中南米・熱帯アジア原産",
- features:"まるいボール状の花。ショッキングピンク・紫・白・赤・オレンジなど。ドライフラワーにしても色が長持ち。",
- extraInfo:[{label:"名前の由来",text:"「千日紅（センニチコウ）」＝千日間色が褪せないほど花持ちが良い。Globe（球）＋Amaranth（色あせない）も同じ意味。"},{label:"日本との縁",text:"ケイトウと並ぶお盆の仏花定番。日本の夏の風物詩的な花。"}],
- highlight:"「ベリーみたいなレンゲみたいなショッキングピンクの花」という表現がぴったりの可愛い花。",
- location:"散歩中・公園",tags:["中南米・熱帯アジア原産"],photos:[],date:"",memo:""},
+  {id:'f14',cat:'flower',
+   en:'Globe Amaranth',jp:'センニチコウ（千日紅）',sci:'Gomphrena globosa',
+   rows:[{l:'名前の由来',t:'「千日紅（センニチコウ）」＝千日間色が褪せないほど花持ちが良い。Globe（球）＋Amaranth（色あせない）も同じ意味'},{l:'特徴',t:'まさに「ベリーみたいなレンゲみたいな」丸いボール状の花。ショッキングピンク・紫・白・赤・オレンジなど。ドライフラワーにしても色が長持ち'},{l:'日本との縁',t:'ケイトウと並ぶお盆の仏花定番。日本の夏の風物詩的な花'}],
+   hl:'「ベリーみたいなレンゲみたいなショッキングピンクの花」という表現がぴったりの可愛い花',
+   where:'散歩中・公園',tags:['中南米・熱帯アジア原産']},
 
-{jp:"ウェイゲラ「ピンクポペット」",en:"Pink Poppet Weigela",sci:"Weigela florida 'Pink Poppet'",
- origin:"東アジア（中国・日本・朝鮮半島）",
- features:"春〜初夏にピンクの花がびっしり咲く。",
- extraInfo:[{label:"「Pink Poppet」とは",text:"コンパクトサイズの矮性品種。60〜90cm程度でこんもりとまとまった樹形。"},{label:"ダラスとの相性",text:"本来涼しい温帯気候を好むためダラスの猛暑はやや苦手。日陰〜半日陰の場所なら比較的育てやすい。"}],
- highlight:"Love Fieldの新しいObservation Areaに植えられているのを発見。空港の植栽として管理された環境で育てられている。",
- location:"Love Field空港 Observation Area",tags:["東アジア原産"],photos:[],date:"",memo:""},
+  {id:'f15',cat:'flower',
+   en:"Pink Poppet Weigela",jp:"ウェイゲラ「ピンク・ポペット」（タニウツギ属）",sci:"Weigela florida 'Pink Poppet'",
+   rows:[{l:'原産',t:'東アジア（中国・日本・朝鮮半島）'},{l:'「Pink Poppet」とは',t:'コンパクトサイズの矮性品種。60〜90cm程度でこんもりとまとまった樹形。春〜初夏にピンクの花がびっしり咲く'},{l:'ダラスとの相性',t:'本来涼しい温帯気候を好むためダラスの猛暑はやや苦手。日陰〜半日陰の場所なら比較的育てやすい'}],
+   hl:'Love Fieldの新しいObservation Areaに植えられているのを発見。空港の植栽として管理された環境で育てられている',
+   where:'Love Field空港Observation Area',tags:['東アジア原産']},
 
-{jp:"マルバビスカス（ターク's キャップ）",en:"Turk's Cap",sci:"Malvaviscus arboreus",
- origin:"テキサス・メキシコ・中央アメリカ",
- features:"花びらが完全に開かず「くるくると巻いたまま」の形がオスマントルコの帽子（フェズ帽）に似ることから「Turk's Cap」。",
- extraInfo:[{label:"科",text:"アオイ科（ハイビスカスの仲間）。"},{label:"食用",text:"花・実ともに食べられる。メキシコでは「コロラリート」と呼ばれ伝統的に食用にされてきた。花はサラダに、実はジャム・ゼリーに。"}],
- highlight:"テキサスのネイティブプランツ（在来植物）の代表格。猛暑・乾燥に超強く、ハチドリ・蝶・ミツバチを引き寄せる。冬に地上部が枯れても春に復活する。",
- location:"公園",tags:["テキサス原産","食用可"],photos:[],date:"",memo:""},
+  {id:'f16',cat:'flower',
+   en:"Turk's Cap / Malvaviscus arboreus",jp:"マルバビスカス（ターク's キャップ）",sci:'Malvaviscus arboreus',
+   rows:[{l:'原産',t:'テキサス・メキシコ・中央アメリカ'},{l:'名前の由来',t:"花びらが完全に開かず「くるくると巻いたまま」の形がオスマントルコの帽子（フェズ帽）に似ることから"},{l:'科',t:'アオイ科（ハイビスカスの仲間）'},{l:'食用',t:'花・実ともに食べられる。メキシコでは「コロラリート」と呼ばれ伝統的に食用にされてきた。花はサラダに、実はジャム・ゼリーに'}],
+   hl:'テキサスのネイティブプランツ（在来植物）の代表格。猛暑・乾燥に超強く、ハチドリ・蝶・ミツバチを引き寄せる。冬に地上部が枯れても春に復活する',
+   where:'公園',tags:['テキサス原産','食用可']},
 
-{jp:"セイヨウニンジンボク（西洋人参木）",en:"Chaste Tree",sci:"Vitex agnus-castus",
- origin:"地中海沿岸〜中央アジア",
- features:"夏〜秋（6〜9月）に紫・ラベンダー色の穂状の花を咲かせる。葉にハーブのような爽やかな香り。",
- extraInfo:[{label:"名前の由来",text:"「Chaste（純潔な）」Tree＝古代ギリシャ・ローマ時代に性欲を抑える効果があると信じられ、修道士や尼僧が使っていたとされることから。学名agnus-castusもラテン語で「純潔な子羊」の意味。"}],
- highlight:"Thanks-Giving Square（フィリップ・ジョンソン設計・1976年完成）に植えられている。「神聖な木」として知られる植物がこの感謝の聖地に選ばれているのは意図的かもしれない。",
- location:"Thanks-Giving Square",tags:[],photos:[],date:"",memo:""},
+  {id:'f17',cat:'flower',
+   en:'Chaste Tree',jp:'セイヨウニンジンボク（西洋人参木）',sci:'Vitex agnus-castus',
+   rows:[{l:'原産',t:'地中海沿岸〜中央アジア'},{l:'名前の由来',t:'「Chaste（純潔な）」Tree＝古代ギリシャ・ローマ時代に性欲を抑える効果があると信じられ、修道士や尼僧が使っていたとされることから。学名agnus-castusもラテン語で「純潔な子羊」の意味'},{l:'特徴',t:'夏〜秋（6〜9月）に紫・ラベンダー色の穂状の花を咲かせる。葉にハーブのような爽やかな香り'}],
+   hl:'Thanks-Giving Square（フィリップ・ジョンソン設計・1976年完成）に植えられている。「神聖な木」として知られる植物がこの感謝の聖地に選ばれているのは意図的かもしれない',
+   where:'Thanks-Giving Square',tags:[]},
 
-{jp:"サルスベリ（百日紅）",en:"Crape Myrtle",sci:"Lagerstroemia indica",
- origin:"中国・東アジア（インド・東南アジアも含む）",
- features:"6〜8月のピーク時にピンク・白・赤の花を咲かせる。ダラスで最もよく見かける街路樹・庭木のひとつ。",
- extraInfo:[{label:"日本名の由来",text:"「百日紅（サルスベリ）」の2つの意味：①百日間咲き続ける長い花期 ②樹皮がツルツルしていてサルも滑る。"},{label:"英語名の由来",text:"「Crape（クレープ）」＝薄い布のようにひらひらした花びらの質感から。"},{label:"日本との違い",text:"ダラスでは大木になる品種が多く5〜10m以上になることも。日本よりはるかに大きく街路樹として堂々とした姿。"}],
- highlight:"テキサスの気候に完璧にマッチ。6〜8月のピーク時には街全体がピンク・白・赤に彩られるダラスの夏の風物詩。",
- location:"ダウンタウン各所・街路樹として至る所に",tags:["東アジア原産","ダラス定番"],photos:[],date:"",memo:""},
+  {id:'f18',cat:'flower',
+   en:'Crape Myrtle',jp:'サルスベリ（百日紅）',sci:'Lagerstroemia indica',
+   rows:[{l:'原産',t:'中国・東アジア（インド・東南アジアも含む）'},{l:'日本名の由来',t:'「百日紅（サルスベリ）」の2つの意味：①百日間咲き続ける長い花期 ②樹皮がツルツルしていてサルも滑る'},{l:'英語名の由来',t:'「Crape（クレープ）」＝薄い布のようにひらひらした花びらの質感から'},{l:'日本との違い',t:'ダラスでは大木になる品種が多く5〜10m以上になることも。日本よりはるかに大きく街路樹として堂々とした姿'}],
+   hl:'ダラスで最もよく見かける街路樹・庭木のひとつ。テキサスの気候に完璧にマッチ。6〜8月のピーク時には街全体がピンク・白・赤に彩られるダラスの夏の風物詩',
+   where:'ダウンタウン各所・街路樹として至る所に',tags:['東アジア原産','ダラス定番']},
 
-{jp:"ホーリーバジル（カミメボウキ）",en:"Holy Basil / Tulsi",sci:"Ocimum tenuiflorum",
- origin:"インド・東南アジア",
- features:"スパイシー・クローブに似た香り。普通のバジル（スイートバジル）より刺激が強い。",
- extraInfo:[{label:"タイ語名",text:"ガパオ（Krapao）—タイ料理で有名な「ガパオライス（鶏ひき肉炒め）」のガパオはこの植物のこと。"},{label:"カプレーゼには？",text:"向かない。カプレーゼにはスイートバジル（Genovese Basil）が最適。"}],
- highlight:"スイートバジルと見た目は似ているが香りが全く違う。タイ料理好きの方はぜひ育ててみると本格ガパオライスが家で作れる。",
- location:"Ruibal's Garden",tags:[],photos:[],date:"",memo:""},
+  {id:'f19',cat:'flower',
+   en:'Holy Basil',jp:'カミメボウキ（神目箒）/ ホーリーバジル',sci:'Ocimum tenuiflorum',
+   rows:[{l:'タイ語名',t:'ガパオ（Krapao）—タイ料理で有名な「ガパオライス（鶏ひき肉炒め）」のガパオはこの植物のこと'},{l:'特徴',t:'スパイシー・クローブに似た香り。普通のバジル（スイートバジル）より刺激が強い'},{l:'カプレーゼには？',t:'向かない。カプレーゼにはスイートバジル（Genovese Basil）が最適'}],
+   hl:'スイートバジルと見た目は似ているが香りが全く違う。タイ料理好きの方はぜひ育ててみると本格ガパオライスが家で作れる',
+   where:"Ruibal's Garden",tags:[]},
 
-{jp:"レモンバジル",en:"Lemon Basil",sci:"Ocimum × citriodorum",
- origin:"東南アジア",
- features:"レモンのような爽やかな柑橘系の香りがする。普通のバジルより葉が小さめ。",
- extraInfo:[{label:"使い方",text:"タイ・インドネシアなど東南アジア料理、魚料理、デザート、ハーブティーに合う。"},{label:"カプレーゼには？",text:"レモンの酸味が個性的すぎてチーズと喧嘩する可能性あり。カプレーゼにはやはりスイートバジルが一番。"}],
- highlight:"Holy BasilもLemon Basilも個性的な香りを持つ。カプレーゼにはGenovese（スイート）バジルを！",
- location:"Ruibal's Garden",tags:[],photos:[],date:"",memo:""},
+  {id:'f20',cat:'flower',
+   en:'Lemon Basil',jp:'レモンバジル',sci:'Ocimum × citriodorum',
+   rows:[{l:'特徴',t:'レモンのような爽やかな柑橘系の香りがする。普通のバジルより葉が小さめ'},{l:'使い方',t:'タイ・インドネシアなど東南アジア料理、魚料理、デザート、ハーブティーに合う'},{l:'カプレーゼには？',t:'レモンの酸味が個性的すぎてチーズと喧嘩する可能性あり。カプレーゼにはやはりスイートバジルが一番'}],
+   hl:"Holy BasilもLemon Basilも個性的な香りを持つ。カプレーゼにはGenovese（スイート）バジルを！",
+   where:"Ruibal's Garden",tags:[]},
 
-{jp:"ルドベキア「ゴールドスタルム」",en:"Goldsturm Black-Eyed Susan",sci:"Rudbeckia fulgida var. sullivantii 'Goldsturm'",
- origin:"北アメリカ",
- features:"鮮やかな黄色〜オレンジ黄色の花と黒い中心部。花期が夏〜秋と非常に長い。多年草なので毎年咲く。",
- extraInfo:[{label:"名前の由来",text:"Black-Eyed（黒い目）＝花の中心部が濃い茶色〜黒で「黒い目」のように見える。Goldsturm＝ドイツ語で「金の嵐」。"},{label:"ヒマワリとの違い",text:"同じキク科で見た目が似るが、Black-Eyed Susanは花が5〜8cmと小さく、多年草で、中心部がより黒い。"}],
- highlight:"多年草なのでローメンテナンス。ダラスの暑さ・乾燥にも強くハチドリ・蝶を引き寄せる。切り花としても人気。",
- location:"散歩中・公園",tags:["北米原産","テキサス向き"],photos:[],date:"",memo:""},
+  {id:'f21',cat:'flower',
+   en:'Goldsturm Black-Eyed Susan',jp:"ルドベキア「ゴールドスタルム」",sci:"Rudbeckia fulgida var. sullivantii 'Goldsturm'",
+   rows:[{l:'原産',t:'北アメリカ'},{l:'名前の由来',t:'Black-Eyed（黒い目）＝花の中心部が濃い茶色〜黒で「黒い目」のように見える。Susan＝17〜18世紀のイギリスの詩から来た愛称。Goldsturm＝ドイツ語で「金の嵐」'},{l:'特徴',t:'鮮やかな黄色〜オレンジ黄色の花と黒い中心部。花期が夏〜秋と非常に長い。多年草なので毎年咲く'},{l:'ヒマワリとの違い',t:'同じキク科で見た目が似るが、Black-Eyed Susanは花が5〜8cmと小さく、多年草で、中心部がより黒い'}],
+   hl:'多年草なのでローメンテナンス。ダラスの暑さ・乾燥にも強くハチドリ・蝶を引き寄せる。切り花としても人気',
+   where:'散歩中・公園',tags:['北米原産・テキサス向き']},
+
+  /* BIRDS */
+  {id:'b00',cat:'bird',
+   en:'Common Starling',jp:'ホシムクドリ（星椋鳥）',sci:'Sturnus vulgaris',
+   rows:[{l:'科',t:'ムクドリ科（Sturnidae）—本物のムクドリ。Great-tailed Grackle（ムクドリ「モドキ」）とは別科'},{l:'原産',t:'ヨーロッパ・西アジア'},{l:'アメリカへの経緯',t:"1890年にニューヨークの薬剤師ユージン・シーフェリンが「シェイクスピアの作品に登場する鳥を全部アメリカに持ち込みたい」という奇妙な動機でセントラルパークに60羽を放鳥。その60羽が今や全米3億羽以上に増殖！"},{l:'見た目',t:'黒っぽい羽に緑・紫の金属光沢。冬は白い斑点（星のような模様→「ホシ」の名の由来）。夏は斑点が消えてつやつやした黒に'}],
+   hl:'ムルムレーション（Murmuration）：数万〜数十万羽が一体となって空中で複雑な模様を描く集団飛行が有名。ダラス周辺でも秋〜冬に見られることがある',
+   where:'ダウンタウン・公園',tags:['外来種（ヨーロッパ原産）']},
+
+  {id:'b01',cat:'bird',
+   en:'Great-tailed Grackle',jp:'オナガクロムクドリモドキ',sci:'Quiscalus mexicanus',
+   rows:[{l:'科',t:"コウウチョウ科（Icteridae）—「モドキ」＝ムクドリに似ているが本物のムクドリではない別科の鳥"},{l:'原産',t:'メキシコ・中央アメリカが原産。20世紀後半から急速に北上・拡大してダラス全土に定着'},{l:'見た目',t:'オス：全身が虹色光沢の黒・尾が非常に長くV字型・黄色い目。メス：茶色がかった地味な色・オスより小さく尾も短め'},{l:'鳴き声',t:'金属音・電子音・ギーギー音など多彩な声。夕方に何百羽・何千羽と街路樹に集まって大合唱する光景はダラスの風物詩'}],
+   hl:'Common Starling（ホシムクドリ）はヨーロッパ原産の外来種、Great-tailed Grackleはアメリカ原産の在来種。全く出自が違うのに同じ場所でうまく共存している',
+   where:'ダウンタウン・公園・至る所',tags:[]},
+
+  {id:'b02',cat:'bird',
+   en:'Northern Mockingbird',jp:'マネシツグミ（真似鶫）',sci:'Mimus polyglottos',
+   rows:[{l:'テキサス州鳥',t:'テキサス州の公式州鳥！さらにアーカンソー・フロリダ・ミシシッピ・テネシーの計5州で州鳥に指定されているアメリカ南部を代表する鳥'},{l:'最大の特徴',t:'200種類以上の他の鳥の鳴き声を真似できる！しかも鳥の声だけでなく、カエルの声・犬の鳴き声・車のアラーム音・ドアのきしむ音まで真似することがある'},{l:'見た目',t:'全体的に灰色がかった色。飛ぶと目立つ白いパッチ（翼斑）。スリムで尾が長め。体長約25cm'},{l:'文化的な縁',t:'「アラバマ物語（To Kill a Mockingbird）」のタイトルに。「モッキングバードを殺してはいけない、彼らは人間に害を与えず、ただ歌うだけだから」という有名な言葉'}],
+   hl:'「複数の鳥がいる？」と思ったら1羽のマネシツグミかもしれない！同じ鳥が次々と違う鳴き声を出すので混乱させられる',
+   where:'ダウンタウン・公園',tags:['テキサス州鳥']},
+
+  {id:'b03',cat:'bird',
+   en:'American Robin',jp:'コマツグミ（小駒鶫）',sci:'Turdus migratorius',
+   rows:[{l:'科',t:"ツグミ科—日本のツグミやシロハラに近い仲間。ヨーロッパのロビンとは実は別科（外見が似ているためロビンと名付けられた）"},{l:'見た目',t:'オレンジ色のお腹が最大の特徴でとても目立つ。背中・頭は濃いグレー〜黒。黄色いくちばし。丸みのあるふっくらした体型。体長約25cm'},{l:'アメリカでの存在感',t:'春の訪れを告げる鳥として非常に有名。芝生でミミズを探してちょこちょこ歩く姿が典型的。アメリカ人なら誰でも知っている身近な鳥'}],
+   hl:"あのオレンジのお腹は遠くからでもすぐわかる。公園や住宅地の芝生でよく見かける。「春が来た」と感じさせてくれる鳥",
+   where:'公園・住宅地の芝生',tags:[]},
+
+  {id:'b04',cat:'bird',
+   en:'White-winged Dove',jp:'シロハラバト（白腹鳩）',sci:'Zenaida asiatica',
+   rows:[{l:'科',t:'ハト科'},{l:'原産',t:'メキシコ・中米〜アメリカ南西部が原産。過去数十年で急速に北上・都市化が進みダラスでも一般的になった'},{l:'見た目',t:'翼の縁に沿って走る白いストライプ（飛ぶと目立つ）が名前の由来。全体は茶色がかったグレー。目の周りの青いアイリングが美しい。オレンジ色の目。体長約28〜30cm'},{l:'鳴き声',t:'「フー・クー・クー・クー」という独特の鳴き声。英語では"Who cooks for you?"と聞こえると言われる'},{l:'生態系での役割',t:'サボテンのSaguaro（サワロサボテン）の受粉に重要な役割。花の蜜を求めて花に入り花粉を運ぶ'}],
+   hl:'白い翼のストライプは飛んでいる時が一番目立つ。一度見たら忘れられない特徴的な模様',
+   where:'ダウンタウン・公園',tags:[]},
 ];
 
-const SEED_BIRDS = [
-{jp:"ホシムクドリ（星椋鳥）",en:"Common Starling / European Starling",sci:"Sturnus vulgaris",
- origin:"ヨーロッパ・西アジア",
- features:"黒っぽい羽に緑・紫の金属光沢。冬は白い斑点（星のような模様→「ホシ」の名の由来）。夏は斑点が消えてつやつやした黒に。",
- extraInfo:[{label:"科",text:"ムクドリ科（Sturnidae）—本物のムクドリ。Great-tailed Grackle（ムクドリ「モドキ」）とは別科。"},{label:"アメリカへの経緯",text:"1890年にニューヨークの薬剤師ユージン・シーフェリンが「シェイクスピアの作品に登場する鳥を全部アメリカに持ち込みたい」という奇妙な動機でセントラルパークに60羽を放鳥。その60羽が今や全米3億羽以上に増殖！"}],
- highlight:"ムルムレーション（Murmuration）：数万〜数十万羽が一体となって空中で複雑な模様を描く集団飛行が有名。ダラス周辺でも秋〜冬に見られることがある。",
- location:"ダウンタウン・公園",tags:["外来種（ヨーロッパ原産）"],photos:[],date:"",memo:""},
+/* ================================================================
+   FIREBASE STATE
+   edits/{id}  → user edits to base entries (photos, memo, date etc.)
+   deleted/{id} → base entries user deleted
+   added/flowers/{key} & added/birds/{key} → new user-added entries
+   ================================================================ */
+let fbEdits={}, fbDeleted={}, fbAdded={flower:{},bird:{}};
+let currentTags=[], editKey=null, editCat=null, confirmCb=null, photoIdx={};
 
-{jp:"オナガクロムクドリモドキ",en:"Great-tailed Grackle",sci:"Quiscalus mexicanus",
- origin:"メキシコ・中央アメリカが原産。20世紀後半から急速に北上・拡大してダラス全土に定着。",
- features:"オス：全身が虹色光沢の黒・尾が非常に長くV字型・黄色い目。メス：茶色がかった地味な色・オスより小さく尾も短め。",
- extraInfo:[{label:"科",text:"コウウチョウ科（Icteridae）—「モドキ」＝ムクドリに似ているが本物のムクドリではない別科の鳥。"},{label:"鳴き声",text:"金属音・電子音・ギーギー音など多彩な声。夕方に何百羽・何千羽と街路樹に集まって大合唱する光景はダラスの風物詩。"}],
- highlight:"Common Starling（ホシムクドリ）はヨーロッパ原産の外来種、Great-tailed Grackleはアメリカ原産の在来種。全く出自が違うのに同じ場所でうまく共存している。",
- location:"ダウンタウン・公園・至る所",tags:["在来種","アメリカ南部"],photos:[],date:"",memo:""},
-
-{jp:"マネシツグミ（真似鶫）",en:"Northern Mockingbird",sci:"Mimus polyglottos",
- origin:"北アメリカ",
- features:"200種類以上の他の鳥の鳴き声を真似できる！しかも鳥の声だけでなく、カエルの声・犬の鳴き声・車のアラーム音・ドアのきしむ音まで真似することがある。全体的に灰色がかった色。飛ぶと目立つ白いパッチ（翼斑）。",
- extraInfo:[{label:"テキサス州鳥",text:"テキサス州の公式州鳥！さらにアーカンソー・フロリダ・ミシシッピ・テネシーの計5州で州鳥に指定されているアメリカ南部を代表する鳥。"},{label:"文化的な縁",text:"「アラバマ物語（To Kill a Mockingbird）」のタイトルに。「モッキングバードを殺してはいけない、彼らは人間に害を与えず、ただ歌うだけだから」という有名な言葉。"}],
- highlight:"「複数の鳥がいる？」と思ったら1羽のマネシツグミかもしれない！同じ鳥が次々と違う鳴き声を出すので混乱させられる。",
- location:"ダウンタウン・公園",tags:["テキサス州鳥"],photos:[],date:"",memo:""},
-
-{jp:"コマツグミ（小駒鶫）",en:"American Robin",sci:"Turdus migratorius",
- origin:"北アメリカ",
- features:"オレンジ色のお腹が最大の特徴でとても目立つ。背中・頭は濃いグレー〜黒。黄色いくちばし。丸みのあるふっくらした体型。体長約25cm。",
- extraInfo:[{label:"科",text:"ツグミ科—日本のツグミやシロハラに近い仲間。ヨーロッパのロビンとは実は別科（外見が似ているためロビンと名付けられた）。"},{label:"アメリカでの存在感",text:"春の訪れを告げる鳥として非常に有名。芝生でミミズを探してちょこちょこ歩く姿が典型的。アメリカ人なら誰でも知っている身近な鳥。"}],
- highlight:"あのオレンジのお腹は遠くからでもすぐわかる。公園や住宅地の芝生でよく見かける。「春が来た」と感じさせてくれる鳥。",
- location:"公園・住宅地の芝生",tags:[],photos:[],date:"",memo:""},
-
-{jp:"シロハラバト（白腹鳩）",en:"White-winged Dove",sci:"Zenaida asiatica",
- origin:"メキシコ・中米〜アメリカ南西部が原産。過去数十年で急速に北上・都市化が進みダラスでも一般的になった。",
- features:"翼の縁に沿って走る白いストライプ（飛ぶと目立つ）が名前の由来。全体は茶色がかったグレー。目の周りの青いアイリングが美しい。オレンジ色の目。体長約28〜30cm。",
- extraInfo:[{label:"科",text:"ハト科。"},{label:"鳴き声",text:"「フー・クー・クー・クー」という独特の鳴き声。英語では\"Who cooks for you?\"と聞こえると言われる。"},{label:"生態系での役割",text:"サボテンのSaguaro（サワロサボテン）の受粉に重要な役割。花の蜜を求めて花に入り花粉を運ぶ。"}],
- highlight:"白い翼のストライプは飛んでいる時が一番目立つ。一度見たら忘れられない特徴的な模様。",
- location:"ダウンタウン・公園",tags:[],photos:[],date:"",memo:""},
-];
-
-/* ── STATE ── */
-let tab='flower', allData={flower:{},bird:{}}, editKey=null;
-let currentTags=[], confirmCb=null, cardPhotoIdx={};
-
+function toArr(v){ if(!v)return[]; if(Array.isArray(v))return v; return Object.values(v); }
 function driveUrl(u){
   if(!u)return null;
   const m=u.match(/\/file\/d\/([^/?#]+)/);
@@ -449,257 +459,277 @@ function driveUrl(u){
   return u;
 }
 
-function toArr(v){
-  if(!v)return[];
-  if(Array.isArray(v))return v;
-  return Object.values(v);
-}
-
-/* ── SEED ── */
-async function seedAll(){
-  try {
-    const flowersObj={}, birdsObj={};
-    SEED_FLOWERS.forEach((f,i)=>{ flowersObj['f'+String(i).padStart(2,'0')]={...f,category:'flower'}; });
-    SEED_BIRDS.forEach(  (b,i)=>{ birdsObj[  'b'+String(i).padStart(2,'0')]={...b,category:'bird'  }; });
-    await set(ref(db,'flowers'), flowersObj);
-    await set(ref(db,'birds'),   birdsObj);
-    toast('詳細データ（22花・5鳥）を登録しました ✓');
-  } catch(err) {
-    console.error('Seed error:', err);
-    toast('エラーが発生しました: ' + err.message);
-  }
-}
-
-async function initData(){
-  const snap=await get(child(ref(db),'flowers'));
-  if(!snap.exists()){await seedAll();return;}
-  const first=Object.values(snap.val())[0];
-  // Always show reseed button so user can refresh data anytime
-  document.getElementById('reseed-btn').style.display='';
-}
-
 /* ── LISTENERS ── */
-function startListeners(){
-  onValue(ref(db,'flowers'),s=>{allData.flower=s.val()||{};updateStats();if(tab==='flower')render();});
-  onValue(ref(db,'birds'),  s=>{allData.bird  =s.val()||{};updateStats();if(tab==='bird')  render();});
-}
-
-function updateStats(){
-  const fc=Object.keys(allData.flower).length,bc=Object.keys(allData.bird).length;
-  document.getElementById('st-f').textContent=fc;
-  document.getElementById('st-b').textContent=bc;
-  document.getElementById('st-t').textContent=fc+bc;
-}
+onValue(ref(db,'edits'),   s=>{ fbEdits  =s.val()||{}; renderAll(); });
+onValue(ref(db,'deleted'), s=>{ fbDeleted=s.val()||{}; renderAll(); });
+onValue(ref(db,'added/flowers'),s=>{ fbAdded.flower=s.val()||{}; renderAll(); });
+onValue(ref(db,'added/birds'),  s=>{ fbAdded.bird  =s.val()||{}; renderAll(); });
 
 /* ── RENDER ── */
-function render(){
-  const el=document.getElementById('cards-container');
-  const entries=Object.entries(allData[tab]);
-  const isF=tab==='flower';
-  document.getElementById('count-lbl').textContent=
-    isF?`🌸 花・植物 ${entries.length}種類`:`🐦 鳥 ${entries.length}種類`;
-  if(!entries.length){el.innerHTML='<div class="loading-state">データがありません</div>';return;}
+function renderAll(){
+  const main=document.getElementById('main-content');
 
-  el.innerHTML=entries.map(([key,item],i)=>{
-    const photos=toArr(item.photos).filter(Boolean);
-    const mainImg=photos.length?driveUrl(photos[0]):null;
-    const delay=Math.min(i*.035,.45).toFixed(2);
-    const em=isF?'🌸':'🐦';
-    const tags=toArr(item.tags);
-    const extraInfo=toArr(item.extraInfo);
-    return`
-<div class="card ${isF?'':'bird'}" style="animation-delay:${delay}s">
-  <div class="photo-wrap" id="pw-${key}">
+  const flowerBase = BASE.filter(e=>e.cat==='flower'&&!fbDeleted[e.id])
+    .map(e=>merge(e, fbEdits[e.id]));
+  const birdBase   = BASE.filter(e=>e.cat==='bird'&&!fbDeleted[e.id])
+    .map(e=>merge(e, fbEdits[e.id]));
+  const flowerAdd  = Object.entries(fbAdded.flower).map(([k,v])=>({...v,_key:k,_added:true}));
+  const birdAdd    = Object.entries(fbAdded.bird  ).map(([k,v])=>({...v,_key:k,_added:true}));
+
+  const flowers = [...flowerBase,...flowerAdd];
+  const birds   = [...birdBase,  ...birdAdd  ];
+
+  document.getElementById('st-f').textContent=flowers.length;
+  document.getElementById('st-b').textContent=birds.length;
+  document.getElementById('st-t').textContent=flowers.length+birds.length;
+
+  main.innerHTML = `
+    <div class="sec-head fl" id="flowers">
+      <div class="sec-icon">🌸</div>
+      <div class="sec-tw"><h2>花・植物</h2><p>Flowers &amp; Plants</p></div>
+      <div class="count-badge">${flowers.length}種</div>
+    </div>
+    <div class="cards">${flowers.map((e,i)=>card(e,i,'flower')).join('')}</div>
+
+    <div class="sec-head bi" id="birds">
+      <div class="sec-icon">🐦</div>
+      <div class="sec-tw"><h2>鳥</h2><p>Birds</p></div>
+      <div class="count-badge">${birds.length}種</div>
+    </div>
+    <div class="cards">${birds.map((e,i)=>card(e,i,'bird')).join('')}</div>
+  `;
+}
+
+function merge(base, edit){
+  if(!edit) return {...base, photos:[], userMemo:'', userDate:''};
+  return {
+    ...base,
+    photos: toArr(edit.photos).filter(Boolean),
+    userMemo: edit.memo||'',
+    userDate: edit.date||'',
+    userLoc:  edit.location||'',
+  };
+}
+
+function card(e, i, cat){
+  const photos = toArr(e.photos||[]).filter(Boolean);
+  const mainImg = photos.length ? driveUrl(photos[0]) : null;
+  const delay = Math.min(i*.03,.4).toFixed(2);
+  const isF = cat==='flower';
+  const em = isF?'🌸':'🐦';
+  const uid = e.id || e._key;
+  const rows = toArr(e.rows||[]);
+  const tags = toArr(e.tags||[]);
+  const canDelete = !!e._added; // only user-added entries can be fully deleted; base entries get hidden
+
+  const tagHtml = tags.map(t=>{
+    const cls = t.includes('テキサス')||t.includes('夏')||t.includes('北米')||t.includes('在来') ? 't-texas'
+      : t.includes('日本')||t.includes('東アジア') ? 't-japan'
+      : t.includes('外来')||t.includes('invasive') ? 't-invasive'
+      : t.includes('州鳥') ? 't-statbird'
+      : t.includes('食用') ? 't-edible'
+      : t.includes('熱帯')||t.includes('メキシコ') ? 't-origin' : 't-default';
+    return `<span class="tag ${cls}">${t}</span>`;
+  }).join('');
+
+  return `
+<div class="card ${cat}" style="animation-delay:${delay}s" id="cd-${uid}">
+  <div class="photo-wrap" id="pw-${uid}">
     ${mainImg
-      ?`<img src="${mainImg}" alt="${item.jp}" onerror="this.style.display='none';document.getElementById('pp-${key}').style.display='flex'">
-        <div id="pp-${key}" class="photo-placeholder" style="display:none">${em}</div>
+      ?`<img src="${mainImg}" alt="${e.jp}" onerror="this.style.display='none';document.getElementById('pp-${uid}').style.display='flex'">
+        <div id="pp-${uid}" class="photo-placeholder" style="display:none">${em}</div>
         ${photos.length>1?`
-          <button class="photo-nav prev" onclick="photoNav('${key}',-1,${photos.length})">‹</button>
-          <button class="photo-nav next" onclick="photoNav('${key}', 1,${photos.length})">›</button>
-          <div class="photo-counter" id="pc-${key}">1 / ${photos.length}</div>`:''}
+          <button class="photo-nav prev" onclick="pNav('${uid}',-1,${photos.length},${JSON.stringify(photos).replace(/"/g,'&quot;')})">‹</button>
+          <button class="photo-nav next" onclick="pNav('${uid}', 1,${photos.length},${JSON.stringify(photos).replace(/"/g,'&quot;')})">›</button>
+          <div class="photo-counter" id="pc-${uid}">1 / ${photos.length}</div>`:''}
        `
       :`<div class="photo-placeholder">${em}</div>`}
   </div>
+  <div class="card-header">
+    <div class="card-en">${e.en||''}</div>
+    <div class="card-ja">${e.jp||''}</div>
+    <div class="card-sci">${e.sci||''}</div>
+  </div>
   <div class="card-body">
-    <div class="card-badge">${isF?'Flower':'Bird'}</div>
-    <div class="card-jp">${item.jp||''}</div>
-    <div class="card-en">${item.en||''}</div>
-    <div class="card-sci">${item.sci||''}</div>
-    <div class="info-section">
-      ${item.origin?`<div class="info-row"><span class="info-lbl">原産</span><span class="info-txt">${item.origin}</span></div>`:''}
-      ${item.features?`<div class="info-row"><span class="info-lbl">特徴</span><span class="info-txt">${item.features}</span></div>`:''}
-      ${extraInfo.map(r=>`<div class="info-row"><span class="info-lbl">${r.label||''}</span><span class="info-txt">${r.text||''}</span></div>`).join('')}
-    </div>
-    ${item.highlight?`<div class="highlight-box">💡 ${item.highlight}</div>`:''}
-    ${tags.length?`<div class="tags">${tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>`:''}
-    ${(item.date||item.location)?`<div class="card-meta">${item.date?`<span>📅 ${item.date}</span>`:''}${item.location?`<span>📍 ${item.location}</span>`:''}</div>`:''}
-    ${item.memo?`<div class="card-memo">${item.memo}</div>`:''}
+    ${rows.map(r=>`<div class="info-row"><span class="info-lbl">${r.l||r.label||''}</span><span class="info-txt">${r.t||r.text||''}</span></div>`).join('')}
+    ${e.hl||e.highlight?`<div class="card-hl">💡 ${e.hl||e.highlight}</div>`:''}
+    ${tagHtml?`<div class="tags">${tagHtml}</div>`:''}
+    ${(e.userMemo||e.memo)?`<div class="user-memo">📝 ${e.userMemo||e.memo||''}</div>`:''}
+    <div class="where-seen"><span>📍</span>${e.userLoc||e.where||e.location||''}</div>
+    ${e.userDate||e.date?`<div class="date-added">📅 ${e.userDate||e.date}</div>`:''}
     <div class="card-actions">
-      <button class="btn-edit" onclick="editEntry('${key}')">✏️ 編集</button>
-      <button class="btn-del"  onclick="askDelete('${key}')">🗑️ 削除</button>
+      <button class="btn-edit" onclick="openEdit('${uid}','${cat}')">✏️ 写真・メモを追加</button>
+      <button class="btn-del ${canDelete?'':'hidden'}" onclick="askDel('${uid}','${cat}','${(e.jp||'').replace(/'/g,'\\x27')}')">🗑️</button>
     </div>
   </div>
-</div>`}).join('');
+</div>`;
 }
 
 /* ── PHOTO NAV ── */
-window.photoNav=function(key,dir,total){
-  if(!cardPhotoIdx[key])cardPhotoIdx[key]=0;
-  const photos=toArr(allData[tab][key]?.photos).filter(Boolean);
-  cardPhotoIdx[key]=(cardPhotoIdx[key]+dir+total)%total;
-  const idx=cardPhotoIdx[key];
-  const wrap=document.getElementById('pw-'+key);if(!wrap)return;
-  const img=wrap.querySelector('img'),pp=document.getElementById('pp-'+key),pc=document.getElementById('pc-'+key);
-  if(img){img.src=driveUrl(photos[idx])||'';img.style.display='';}
+window.pNav=function(uid,dir,total,photosArr){
+  if(!photoIdx[uid])photoIdx[uid]=0;
+  photoIdx[uid]=(photoIdx[uid]+dir+total)%total;
+  const idx=photoIdx[uid];
+  const wrap=document.getElementById('pw-'+uid); if(!wrap)return;
+  const img=wrap.querySelector('img'),pp=document.getElementById('pp-'+uid),pc=document.getElementById('pc-'+uid);
+  const url=driveUrl(photosArr[idx]);
+  if(img){img.src=url||'';img.style.display='';}
   if(pp)pp.style.display='none';
   if(pc)pc.textContent=`${idx+1} / ${total}`;
 };
 
-/* ── TAB ── */
-window.switchTab=function(t){
-  tab=t;cardPhotoIdx={};
-  document.getElementById('tab-flower').classList.toggle('active',t==='flower');
-  document.getElementById('tab-bird').classList.toggle('active',t==='bird');
-  render();
+/* ── MODAL OPEN ── */
+window.openModal=function(cat){
+  editKey=null; editCat=cat||'flower';
+  clearForm();
+  document.getElementById('modal-note').style.display='none';
+  setMode();
+  document.getElementById('modal-bg').classList.add('open');
 };
 
-/* ── MODAL ── */
-window.openModal=function(){editKey=null;clearForm();syncMode();document.getElementById('modal-bg').classList.add('open');};
-window.closeModal=function(){document.getElementById('modal-bg').classList.remove('open');editKey=null;};
+window.openEdit=function(uid,cat){
+  editKey=uid; editCat=cat;
+  clearForm();
+
+  // Find base entry
+  const base=BASE.find(e=>e.id===uid);
+  const edit=fbEdits[uid]||{};
+  const added=fbAdded[cat][uid]||{};
+  const src = base ? {...base,...edit} : {...added};
+
+  if(base){
+    // Base entry: only show photo/memo/date/location fields
+    document.getElementById('modal-note').textContent=
+      '基本情報（名前・特徴など）はHTMLに保存されているため変更できません。写真・メモ・日付・場所のみ編集できます。';
+    document.getElementById('modal-note').style.display='block';
+    ['f-jp','f-en','f-sci','f-origin','f-features','f-highlight'].forEach(id=>
+      document.getElementById(id).closest('.fg')?.style.setProperty('display','none'));
+    document.getElementById('extra-rows').closest('div')?.previousElementSibling?.style.setProperty('display','none');
+  } else {
+    document.getElementById('modal-note').style.display='none';
+    ['f-jp','f-en','f-sci','f-origin','f-features','f-highlight'].forEach(id=>
+      document.getElementById(id).closest('.fg')?.style.removeProperty('display'));
+    document.getElementById('f-jp').value=src.jp||'';
+    document.getElementById('f-en').value=src.en||'';
+    document.getElementById('f-sci').value=src.sci||'';
+    document.getElementById('f-origin').value=src.origin||'';
+    document.getElementById('f-features').value=src.features||'';
+    document.getElementById('f-highlight').value=src.hl||src.highlight||'';
+    toArr(src.rows||src.extraInfo||[]).forEach(r=>addErow(r.l||r.label||'',r.t||r.text||''));
+    currentTags=toArr(src.tags||[]);renderTags();
+  }
+
+  document.getElementById('f-date').value=src.userDate||src.date||'';
+  document.getElementById('f-loc').value=src.userLoc||src.location||src.where||'';
+  document.getElementById('f-memo').value=src.userMemo||src.memo||'';
+  toArr(src.photos||[]).filter(Boolean).forEach(u=>addProw(u));
+
+  setMode();
+  document.getElementById('modal-bg').classList.add('open');
+};
+
+function setMode(){
+  const isF=editCat==='flower';
+  document.getElementById('modal-inner').classList.toggle('bird-mode',!isF);
+  document.getElementById('modal-title').textContent =
+    editKey ? (isF?'🌸 花・植物を編集':'🐦 鳥を編集')
+            : (isF?'🌸 新しい花・植物を追加':'🐦 新しい鳥を追加');
+}
+
+window.closeModal=function(){
+  document.getElementById('modal-bg').classList.remove('open');
+  editKey=null; editCat=null;
+  // restore hidden fields
+  ['f-jp','f-en','f-sci','f-origin','f-features','f-highlight'].forEach(id=>
+    document.getElementById(id).closest('.fg')?.style.removeProperty('display'));
+};
 window.bgClick=function(e){if(e.target===document.getElementById('modal-bg'))closeModal();};
 
-function syncMode(){
-  const isF=tab==='flower';
-  document.getElementById('modal-inner').classList.toggle('bird-mode',!isF);
-  document.getElementById('modal-title').textContent=editKey?(isF?'🌸 花・植物を編集':'🐦 鳥を編集'):(isF?'🌸 新しい花・植物を追加':'🐦 新しい鳥を追加');
-}
-
 function clearForm(){
-  ['f-jp','f-en','f-sci','f-origin','f-features','f-highlight','f-date','f-loc','f-memo'].forEach(id=>document.getElementById(id).value='');
-  currentTags=[];renderTagChips();
+  ['f-jp','f-en','f-sci','f-origin','f-features','f-highlight','f-date','f-loc','f-memo']
+    .forEach(id=>document.getElementById(id).value='');
+  currentTags=[];renderTags();
   document.getElementById('extra-rows').innerHTML='';
   document.getElementById('photos-list').innerHTML='';
 }
-
-/* ── EDIT ── */
-window.editEntry=function(key){
-  const d=allData[tab][key];if(!d)return;
-  editKey=key;
-  document.getElementById('f-jp').value=d.jp||'';
-  document.getElementById('f-en').value=d.en||'';
-  document.getElementById('f-sci').value=d.sci||'';
-  document.getElementById('f-origin').value=d.origin||'';
-  document.getElementById('f-features').value=d.features||'';
-  document.getElementById('f-highlight').value=d.highlight||'';
-  document.getElementById('f-date').value=d.date||'';
-  document.getElementById('f-loc').value=d.location||'';
-  document.getElementById('f-memo').value=d.memo||'';
-  currentTags=toArr(d.tags).filter(Boolean);renderTagChips();
-  document.getElementById('extra-rows').innerHTML='';
-  toArr(d.extraInfo).forEach(r=>addExtraRow(r.label||'',r.text||''));
-  document.getElementById('photos-list').innerHTML='';
-  toArr(d.photos).filter(Boolean).forEach(u=>addPhotoRow(u));
-  syncMode();document.getElementById('modal-bg').classList.add('open');
-};
-
-/* ── DELETE ── */
-window.askDelete=function(key){
-  const name=allData[tab][key]?.jp||'このデータ';
-  showConfirm(`「${name}」を削除しますか？`,'この操作は元に戻せません。',()=>{
-    remove(ref(db,(tab==='flower'?'flowers':'birds')+'/'+key)).then(()=>toast('削除しました'));
-  });
-};
 
 /* ── SAVE ── */
 window.saveEntry=function(){
-  const jp=document.getElementById('f-jp').value.trim();
-  const en=document.getElementById('f-en').value.trim();
-  if(!jp||!en){alert('日本語名と英語名は必須です');return;}
-  const extraInfo=Array.from(document.querySelectorAll('.extra-row')).map(row=>{
-    const inputs=row.querySelectorAll('input');
-    return{label:inputs[0].value.trim(),text:inputs[1].value.trim()};
-  }).filter(r=>r.label||r.text);
-  const photos=Array.from(document.querySelectorAll('.photo-row-f input')).map(i=>i.value.trim()).filter(Boolean);
-  const entry={
-    jp,en,
-    sci:document.getElementById('f-sci').value.trim(),
-    origin:document.getElementById('f-origin').value.trim(),
-    features:document.getElementById('f-features').value.trim(),
-    extraInfo,
-    highlight:document.getElementById('f-highlight').value.trim(),
-    date:document.getElementById('f-date').value,
-    location:document.getElementById('f-loc').value.trim(),
-    memo:document.getElementById('f-memo').value.trim(),
-    tags:[...currentTags],photos,category:tab,
-  };
-  const path=(tab==='flower'?'flowers':'birds');
-  if(editKey)
-    update(ref(db,path+'/'+editKey),entry).then(()=>{toast('更新しました ✓');closeModal();});
-  else
-    push(ref(db,path),entry).then(()=>{toast('追加しました ✓');closeModal();});
+  const base=editKey?BASE.find(e=>e.id===editKey):null;
+  const photos=Array.from(document.querySelectorAll('.prow input')).map(i=>i.value.trim()).filter(Boolean);
+  const erows=Array.from(document.querySelectorAll('.erow')).map(r=>{
+    const ins=r.querySelectorAll('input');return{l:ins[0].value.trim(),t:ins[1].value.trim()};
+  }).filter(r=>r.l||r.t);
+
+  if(base){
+    // Only save user-editable fields
+    const data={photos,memo:document.getElementById('f-memo').value.trim(),date:document.getElementById('f-date').value,location:document.getElementById('f-loc').value.trim()};
+    update(ref(db,'edits/'+editKey),data).then(()=>{toast('保存しました ✓');closeModal();});
+  } else {
+    const jp=document.getElementById('f-jp').value.trim(),en=document.getElementById('f-en').value.trim();
+    if(!jp||!en){alert('日本語名と英語名は必須です');return;}
+    const entry={jp,en,sci:document.getElementById('f-sci').value.trim(),origin:document.getElementById('f-origin').value.trim(),
+      features:document.getElementById('f-features').value.trim(),hl:document.getElementById('f-highlight').value.trim(),
+      date:document.getElementById('f-date').value,location:document.getElementById('f-loc').value.trim(),
+      memo:document.getElementById('f-memo').value.trim(),tags:[...currentTags],rows:erows,photos,cat:editCat};
+    const path='added/'+(editCat==='flower'?'flowers':'birds');
+    if(editKey)
+      update(ref(db,path+'/'+editKey),entry).then(()=>{toast('更新しました ✓');closeModal();});
+    else
+      push(ref(db,path),entry).then(()=>{toast('追加しました ✓');closeModal();});
+  }
+};
+
+/* ── DELETE ── */
+window.askDel=function(uid,cat,name){
+  showCfm(`「${name}」を削除しますか？`,'この操作は元に戻せません。',()=>{
+    if(BASE.find(e=>e.id===uid))
+      set(ref(db,'deleted/'+uid),true).then(()=>toast('非表示にしました'));
+    else
+      remove(ref(db,'added/'+(cat==='flower'?'flowers':'birds')+'/'+uid)).then(()=>toast('削除しました'));
+  });
 };
 
 /* ── TAGS ── */
-window.tagKeydown=function(e){
-  if(e.key==='Enter'||e.key===','){
-    e.preventDefault();
-    const v=e.target.value.trim().replace(/,/g,'');
-    if(v&&!currentTags.includes(v)){currentTags.push(v);renderTagChips();}
-    e.target.value='';
-  }
+window.tagKD=function(e){
+  if(e.key==='Enter'||e.key===','){e.preventDefault();const v=e.target.value.trim().replace(/,/g,'');if(v&&!currentTags.includes(v)){currentTags.push(v);renderTags();}e.target.value='';}
 };
-window.removeTag=function(i){currentTags.splice(i,1);renderTagChips();};
-function renderTagChips(){
-  const wrap=document.getElementById('tags-wrap'),input=document.getElementById('tag-input');
-  wrap.innerHTML='';
-  currentTags.forEach((t,i)=>{
-    const c=document.createElement('span');c.className='tag-chip';
-    c.innerHTML=`${t} <button onclick="removeTag(${i})">×</button>`;
-    wrap.appendChild(c);
-  });
-  wrap.appendChild(input);
+window.rmTag=function(i){currentTags.splice(i,1);renderTags();};
+function renderTags(){
+  const w=document.getElementById('tags-wrap'),inp=document.getElementById('tag-input');
+  w.innerHTML='';
+  currentTags.forEach((t,i)=>{const c=document.createElement('span');c.className='tag-chip';c.innerHTML=`${t} <button onclick="rmTag(${i})">×</button>`;w.appendChild(c);});
+  w.appendChild(inp);
 }
 
-/* ── EXTRA INFO ROWS ── */
-window.addExtraRow=function(label='',text=''){
-  const id='er-'+Date.now()+Math.random();
-  const row=document.createElement('div');row.className='extra-row';row.id=id;
-  row.innerHTML=`<input type="text" placeholder="ラベル" value="${label.replace(/"/g,'&quot;')}"><input type="text" placeholder="内容" value="${text.replace(/"/g,'&quot;')}"><button class="btn-rm" onclick="document.getElementById('${id}').remove()">✕</button>`;
-  document.getElementById('extra-rows').appendChild(row);
+/* ── EXTRA ROWS ── */
+window.addErow=function(l='',t=''){
+  const id='er'+Date.now()+Math.random().toString(36).slice(2);
+  const d=document.createElement('div');d.className='erow';d.id=id;
+  d.innerHTML=`<input type="text" placeholder="ラベル" value="${l.replace(/"/g,'&quot;')}"><input type="text" placeholder="内容" value="${t.replace(/"/g,'&quot;')}"><button class="btn-rm" onclick="document.getElementById('${id}').remove()">✕</button>`;
+  document.getElementById('extra-rows').appendChild(d);
 };
 
 /* ── PHOTO ROWS ── */
-window.addPhotoRow=function(val=''){
-  const id='ph-'+Date.now()+Math.random();
-  const row=document.createElement('div');row.className='photo-row-f';row.id=id;
-  row.innerHTML=`<input type="url" placeholder="https://drive.google.com/file/d/.../view" value="${val}"><button class="btn-rm" onclick="document.getElementById('${id}').remove()">✕</button>`;
-  document.getElementById('photos-list').appendChild(row);
-};
-
-/* ── RESEED ── */
-window.offerReseed=function(){
-  showConfirm('詳細データに更新しますか？','現在のデータをすべて削除し、22種の花・5種の鳥の詳細データで上書きします。写真・追記したメモは失われます。',
-    async()=>{document.getElementById('reseed-btn').style.display='none';await seedAll();});
+window.addProw=function(v=''){
+  const id='pr'+Date.now()+Math.random().toString(36).slice(2);
+  const d=document.createElement('div');d.className='prow';d.id=id;
+  d.innerHTML=`<input type="url" placeholder="https://drive.google.com/file/d/.../view" value="${v}"><button class="btn-rm" onclick="document.getElementById('${id}').remove()">✕</button>`;
+  document.getElementById('photos-list').appendChild(d);
 };
 
 /* ── CONFIRM ── */
-function showConfirm(title,msg,cb){
-  confirmCb=cb;
-  document.getElementById('c-title').textContent=title;
-  document.getElementById('c-msg').textContent=msg;
-  document.getElementById('confirm-bg').classList.add('open');
-}
-window.closeConfirm=function(){document.getElementById('confirm-bg').classList.remove('open');confirmCb=null;};
-document.getElementById('c-yes').addEventListener('click',()=>{closeConfirm();if(confirmCb)confirmCb();});
+function showCfm(title,msg,cb){confirmCb=cb;document.getElementById('cfm-title').textContent=title;document.getElementById('cfm-msg').textContent=msg;document.getElementById('cfm-bg').classList.add('open');}
+window.closeCfm=function(){document.getElementById('cfm-bg').classList.remove('open');confirmCb=null;};
+document.getElementById('cfm-yes').addEventListener('click',()=>{closeCfm();if(confirmCb)confirmCb();});
 
 /* ── TOAST ── */
-function toast(msg){
-  const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'),2800);
-}
-
-/* ── INIT ── */
-initData().then(()=>startListeners());
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2800);}
 </script>
+
+<footer>
+  <p>あらがうアラ還の散歩日記 — ダラスダウンタウンで出会った花・植物・鳥の記録</p>
+  <p style="margin-top:8px">2026年5月 Claude（Anthropic）との会話より収集・まとめ</p>
+</footer>
 </body>
 </html>
