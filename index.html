@@ -164,7 +164,7 @@
 <div class="toolbar">
   <span class="count-lbl" id="count-lbl">読み込み中…</span>
   <div class="toolbar-right">
-    <button class="reseed-btn" id="reseed-btn" style="display:none" onclick="offerReseed()">🔄 詳細データに更新</button>
+    <button class="reseed-btn" id="reseed-btn" onclick="offerReseed()">🔄 詳細データに更新</button>
     <button class="add-btn" onclick="openModal()">＋ 追加</button>
   </div>
 </div>
@@ -457,21 +457,25 @@ function toArr(v){
 
 /* ── SEED ── */
 async function seedAll(){
-  await set(ref(db,'flowers'),null);
-  await set(ref(db,'birds'),null);
-  for(const f of SEED_FLOWERS)
-    await push(ref(db,'flowers'),{...f,category:'flower'});
-  for(const b of SEED_BIRDS)
-    await push(ref(db,'birds'),{...b,category:'bird'});
-  toast('詳細データ（22花・5鳥）を登録しました ✓');
+  try {
+    const flowersObj={}, birdsObj={};
+    SEED_FLOWERS.forEach((f,i)=>{ flowersObj['f'+String(i).padStart(2,'0')]={...f,category:'flower'}; });
+    SEED_BIRDS.forEach(  (b,i)=>{ birdsObj[  'b'+String(i).padStart(2,'0')]={...b,category:'bird'  }; });
+    await set(ref(db,'flowers'), flowersObj);
+    await set(ref(db,'birds'),   birdsObj);
+    toast('詳細データ（22花・5鳥）を登録しました ✓');
+  } catch(err) {
+    console.error('Seed error:', err);
+    toast('エラーが発生しました: ' + err.message);
+  }
 }
 
 async function initData(){
   const snap=await get(child(ref(db),'flowers'));
   if(!snap.exists()){await seedAll();return;}
   const first=Object.values(snap.val())[0];
-  if(!first.extraInfo&&!first.features)
-    document.getElementById('reseed-btn').style.display='';
+  // Always show reseed button so user can refresh data anytime
+  document.getElementById('reseed-btn').style.display='';
 }
 
 /* ── LISTENERS ── */
