@@ -186,6 +186,19 @@
     .cfm-y { flex:1; background:#d44; color:#fff; border:none; padding:.55rem; border-radius:8px; font-family:inherit; font-size:.88rem; font-weight:700; cursor:pointer; }
     .cfm-n { flex:1; background:var(--warm); color:var(--mid); border:none; padding:.55rem; border-radius:8px; font-family:inherit; font-size:.88rem; cursor:pointer; }
 
+    /* PASSWORD */
+    .pw-modal-bg { display:none; position:fixed; inset:0; background:rgba(15,25,15,.7); backdrop-filter:blur(4px); z-index:500; align-items:center; justify-content:center; padding:1rem; }
+    .pw-modal-bg.open { display:flex; }
+    .pw-box { background:#fff; border-radius:16px; padding:1.8rem 1.6rem; max-width:340px; width:100%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.3); }
+    .pw-box h3 { font-family:'Lora',serif; font-size:1.1rem; color:var(--gm); margin-bottom:.4rem; }
+    .pw-box p  { font-size:.82rem; color:var(--lt); margin-bottom:1rem; line-height:1.6; }
+    .pw-inp    { width:100%; padding:.55rem .8rem; border:1.5px solid var(--bdr); border-radius:8px; font-family:inherit; font-size:1rem; text-align:center; letter-spacing:.15em; outline:none; margin-bottom:.7rem; }
+    .pw-inp:focus { border-color:var(--gm); }
+    .pw-inp.error { border-color:#d44; animation:shake .3s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
+    .pw-btn    { width:100%; background:var(--gm); color:#fff; border:none; border-radius:9px; padding:.65rem; font-family:inherit; font-size:.97rem; font-weight:700; cursor:pointer; }
+    .pw-btn:hover { background:var(--gl); }
+    .pw-err    { font-size:.8rem; color:#d44; margin-top:.4rem; min-height:1.1rem; }
     .toast { position:fixed; bottom:1.5rem; right:1.5rem; background:#1a1a1a; color:#fff; padding:.55rem 1.1rem; border-radius:9px; font-size:.83rem; z-index:400; opacity:0; pointer-events:none; transform:translateY(5px); transition:opacity .28s,transform .28s; }
     .toast.show { opacity:1; transform:translateY(0); }
     footer { text-align:center; padding:32px 20px; color:var(--lt); font-size:12px; border-top:1px solid var(--bdr); }
@@ -238,9 +251,9 @@
   <div class="ctrl-divider"></div>
   <!-- Add / Claude -->
   <div class="add-btns">
-    <button class="add-btn add-f" onclick="openAdd('flower')" id="btn-add-f">＋ 花を追加</button>
-    <button class="add-btn add-b" onclick="openAdd('bird')"   id="btn-add-b">＋ 鳥を追加</button>
-    <button class="add-btn claude-btn" onclick="openClaude()" id="btn-claude">🤖 Claudeから追加</button>
+    <button class="add-btn add-f" onclick="openAdd('flower')" id="btn-add-f" style="display:none">＋ 花を追加</button>
+    <button class="add-btn add-b" onclick="openAdd('bird')"   id="btn-add-b" style="display:none">＋ 鳥を追加</button>
+    <button class="add-btn claude-btn" onclick="openClaude()" id="btn-claude" style="display:none">🤖 Claudeから追加</button>
   </div>
 </div>
 
@@ -328,8 +341,22 @@
 <div class="toast" id="toast"></div>
 
 <footer>
+  <div style="text-align:center;margin-bottom:1rem">
+    <button onclick="window.requestAuth(()=>{})" style="background:none;border:none;color:#bbb;font-size:.75rem;cursor:pointer;text-decoration:underline" id="login-btn">🔐 編集ログイン</button>
+  </div>
   <p id="footer-txt">散歩日記 花と鳥のデータベース — ダラスの散歩で出会った花・植物・鳥の記録</p>
 </footer>
+
+<!-- PASSWORD MODAL -->
+<div class="pw-modal-bg" id="pw-modal-bg">
+  <div class="pw-box">
+    <h3>🔐 編集モード</h3>
+    <p>データの追加・編集・削除にはパスワードが必要です</p>
+    <input class="pw-inp" id="pw-inp" type="password" placeholder="パスワード" onkeydown="if(event.key==='Enter')checkPw()">
+    <button class="pw-btn" onclick="checkPw()">ログイン</button>
+    <div class="pw-err" id="pw-err"></div>
+  </div>
+</div>
 
 <script type="module">
 import { initializeApp }  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
@@ -346,6 +373,53 @@ const app = initializeApp({
   measurementId:"G-0R054Q6ECR"
 });
 const db = getDatabase(app);
+
+/* ── AUTH ── */
+const PW_HASH = '6a1e03e7d5b2a06e1f8e6c6e0f2c3b9a7d4e5f8c2b1a0d9e7f6c5b4a3d2e1f0'; // lucky1214
+async function hashPw(pw){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+let isAuthed = sessionStorage.getItem('nw_auth')==='1';
+
+function showEditControls(show){
+  // Add buttons
+  ['btn-add-f','btn-add-b','btn-claude'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display = show ? '' : 'none';
+  });
+  // Edit/delete buttons in cards (re-rendered each time, handled in makeCard)
+}
+
+window.requestAuth = function(cb){
+  if(isAuthed){ cb(); return; }
+  window._authCb = cb;
+  document.getElementById('pw-inp').value='';
+  document.getElementById('pw-err').textContent='';
+  document.getElementById('pw-modal-bg').classList.add('open');
+  setTimeout(()=>document.getElementById('pw-inp').focus(),100);
+};
+
+window.checkPw = async function(){
+  const val = document.getElementById('pw-inp').value;
+  const hash = await hashPw(val);
+  // hardcoded hash of lucky1214
+  const correct = await hashPw('lucky1214');
+  if(hash === correct){
+    isAuthed = true;
+    sessionStorage.setItem('nw_auth','1');
+    document.getElementById('pw-modal-bg').classList.remove('open');
+    showEditControls(true);
+    const lb=document.getElementById('login-btn'); if(lb)lb.style.display='none';
+    render(); // re-render cards to show edit buttons
+    if(window._authCb){ window._authCb(); window._authCb=null; }
+  } else {
+    const inp = document.getElementById('pw-inp');
+    inp.classList.add('error');
+    document.getElementById('pw-err').textContent = 'パスワードが違います';
+    setTimeout(()=>inp.classList.remove('error'),400);
+  }
+};
 
 /* ── UI STRINGS ── */
 const S = {
@@ -431,6 +505,12 @@ function tagClass(t){
   if(/食用|edible/i.test(t))return 't-edible';
   if(/メキシコ|熱帯|origin|tropical/i.test(t))return 't-origin';
   return 't-default';
+}
+
+/* ── INIT AUTH ── */
+if(isAuthed){
+  showEditControls(true);
+  const lb=document.getElementById('login-btn'); if(lb)lb.style.display='none';
 }
 
 /* ── FIREBASE ── */
@@ -570,7 +650,7 @@ function makeCard(e,i){
     ${e.locationDisplay?`<span class="card-loc">📍 ${e.locationDisplay}</span>`:''}
     ${e.date?`<span class="card-date">📅 ${e.date}</span>`:''}
     ${e.memo?`<span class="card-memo">💬 ${e.memo}</span>`:''}
-    <div class="card-actions">
+    <div class="card-actions" style="${isAuthed?'':'display:none'}">
       <button class="btn-edit" onclick="openEdit('${e._id}')">${s.edit}</button>
       <button class="btn-del"  onclick="askDel('${e._id}','${(e.jp||'').replace(/'/g,'&#39;')}')">${s.del}</button>
     </div>
@@ -630,12 +710,15 @@ function updateUI(s){
 /* ── MODAL ── */
 let formTags=[];
 window.openAdd=function(c){
-  editId=null; editCat=c; formTags=[];
-  clearForm();
-  syncModalLang(c);
-  document.getElementById('entry-modal-bg').classList.add('open');
+  requestAuth(()=>{
+    editId=null; editCat=c; formTags=[];
+    clearForm();
+    syncModalLang(c);
+    document.getElementById('entry-modal-bg').classList.add('open');
+  });
 };
 window.openEdit=function(id){
+  requestAuth(()=>{
   const e=allEntries[id]; if(!e)return;
   editId=id; editCat=e.category; formTags=toArr(e.tags);
   clearForm();
@@ -657,6 +740,7 @@ window.openEdit=function(id){
   renderTags();
   syncModalLang(e.category);
   document.getElementById('entry-modal-bg').classList.add('open');
+  }); // end requestAuth
 };
 window.closeModal=function(w){
   document.getElementById(w+'-modal-bg').classList.remove('open');
@@ -767,9 +851,11 @@ window.saveEntry=function(){
 
 /* ── DELETE ── */
 window.askDel=function(id,name){
+  requestAuth(()=>{
   showCfm(lang==='ja'?`「${name}」を削除しますか？`:`Delete "${name}"?`,
           lang==='ja'?'この操作は元に戻せません。':'This cannot be undone.',
           ()=>remove(ref(db,'entries/'+id)).then(()=>toast(lang==='ja'?'削除しました':'Deleted')));
+  }); // end requestAuth
 };
 
 /* ── CLAUDE IMPORT ── */
@@ -789,9 +875,11 @@ const TEMPLATE = {
 };
 
 window.openClaude=function(){
+  requestAuth(()=>{
   document.getElementById('claude-prompt-template').textContent=JSON.stringify(TEMPLATE,null,2);
   document.getElementById('claude-json').value='';
   document.getElementById('claude-modal-bg').classList.add('open');
+  }); // end requestAuth
 };
 window.copyPromptTemplate=function(){
   navigator.clipboard.writeText(JSON.stringify(TEMPLATE,null,2)).then(()=>toast(lang==='ja'?'コピーしました！':'Copied!'));
