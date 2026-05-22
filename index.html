@@ -254,6 +254,7 @@
     <button class="add-btn add-f" onclick="openAdd('flower')" id="btn-add-f" style="display:none">＋ 花を追加</button>
     <button class="add-btn add-b" onclick="openAdd('bird')"   id="btn-add-b" style="display:none">＋ 鳥を追加</button>
     <button class="add-btn claude-btn" onclick="openClaude()" id="btn-claude" style="display:none">🤖 Claudeから追加</button>
+    <button onclick="window.requestAuth(()=>{})" id="login-btn" title="編集ログイン" style="background:none;border:1.5px solid #ddd;color:#bbb;font-size:.78rem;cursor:pointer;border-radius:6px;padding:.32rem .6rem;transition:all .2s">🔐</button>
   </div>
 </div>
 
@@ -341,9 +342,6 @@
 <div class="toast" id="toast"></div>
 
 <footer>
-  <div style="text-align:center;margin-bottom:1rem">
-    <button onclick="window.requestAuth(()=>{})" style="background:none;border:none;color:#bbb;font-size:.75rem;cursor:pointer;text-decoration:underline" id="login-btn">🔐 編集ログイン</button>
-  </div>
   <p id="footer-txt">散歩日記 花と鳥のデータベース — ダラスの散歩で出会った花・植物・鳥の記録</p>
 </footer>
 
