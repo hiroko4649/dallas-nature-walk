@@ -16,12 +16,17 @@
     body { font-family:'Noto Sans JP',sans-serif; background:var(--cream); color:var(--text); line-height:1.7; }
 
     /* HEADER */
-    header { background:linear-gradient(135deg,var(--gd) 0%,#2d5016 50%,#1a3a20 100%); padding:40px 40px 32px; position:relative; overflow:hidden; }
-    header::before { content:'🌿'; position:absolute; font-size:180px; opacity:.06; right:-10px; top:-30px; }
-    header::after  { content:'🐦'; position:absolute; font-size:130px; opacity:.06; right:150px; bottom:-15px; }
+    header {
+      background: linear-gradient(135deg,var(--gd) 0%,#2d5016 50%,#1a3a20 100%);
+      background-image: url('https://lh3.googleusercontent.com/d/1eOM5ieXKoCzR6L_CJT3FFtSF7T5SQRQT');
+      background-size: cover; background-position: center;
+      padding:40px 40px 32px; position:relative; overflow:hidden;
+    }
+    header::before { content:''; position:absolute; inset:0; background:rgba(10,22,14,.58); z-index:0; }
     .h-inner { max-width:1060px; margin:0 auto; position:relative; z-index:1; display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; }
-    .h-text h1 { font-family:'Lora',serif; font-size:clamp(1.1rem,3vw,1.55rem); font-weight:600; color:#fff; line-height:1.4; margin-bottom:.3rem; }
-    .h-text p  { color:var(--gl); font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; font-weight:300; }
+    .h-text h1 { font-family:'Lora',serif; font-size:clamp(1.15rem,3vw,1.6rem); font-weight:600; color:#fff; line-height:1.4; margin-bottom:.15rem; text-shadow:0 1px 4px rgba(0,0,0,.4); }
+    .h-title-en { font-family:'Lora',serif; font-size:clamp(.82rem,2vw,1.05rem); font-weight:400; font-style:italic; color:rgba(255,255,255,.78); margin-bottom:.35rem; text-shadow:0 1px 3px rgba(0,0,0,.4); }
+    .h-text p  { color:rgba(255,255,255,.62); font-size:.73rem; letter-spacing:.1em; text-transform:uppercase; font-weight:300; }
     .h-stats   { display:flex; gap:14px; margin-top:16px; flex-wrap:wrap; }
     .stat      { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15); border-radius:9px; padding:8px 18px; text-align:center; }
     .stat-n    { font-size:1.4rem; font-weight:900; color:#fff; }
@@ -116,6 +121,7 @@
     .card-footer { border-top:1px dashed var(--bdr); padding:9px 17px 12px; display:flex; flex-wrap:wrap; align-items:center; gap:.4rem .8rem; }
     .card-loc  { font-size:12px; color:var(--lt); }
     .card-date { font-size:11px; color:var(--lt); }
+    .card-memo { width:100%; margin-top:6px; font-size:12px; color:var(--mid); font-style:italic; line-height:1.6; }
     .card-actions { margin-left:auto; display:flex; gap:5px; }
     .card-actions button { padding:4px 10px; border-radius:6px; border:none; cursor:pointer; font-size:11.5px; font-family:inherit; transition:background .15s; }
     .btn-edit { background:var(--warm); color:var(--mid); }
@@ -192,6 +198,7 @@
   <div class="h-inner">
     <div class="h-text">
       <h1 id="h-title">散歩日記 — 花と鳥のデータベース</h1>
+      <p class="h-title-en" id="h-title-en">Walking Diary — Flowers &amp; Birds Database</p>
       <p id="h-sub">FLOWERS, PLANTS &amp; BIRDS ENCOUNTERED ON WALKS IN DALLAS</p>
       <div class="h-stats">
         <div class="stat"><div class="stat-n" id="st-f">—</div><div class="stat-l" id="st-fl">花・植物</div></div>
@@ -219,6 +226,10 @@
     <option value="en">英語名順</option>
     <option value="jp">日本語名順</option>
     <option value="date">見かけた日順</option>
+  </select>
+  <!-- Month/Year filter -->
+  <select class="ctrl-sel" id="month-sel" onchange="setMonth(this.value)">
+    <option value="">すべての時期</option>
   </select>
   <!-- Search -->
   <div class="search-wrap">
@@ -277,6 +288,9 @@
   <div class="fsec" id="fsec-photos">写真 / Photos（Google Drive URL）</div>
   <div class="dyn-list" id="photo-rows"></div>
   <button class="btn-add-row" id="btn-add-photo" onclick="addPhotoRow()">＋ 写真URLを追加</button>
+
+  <div class="fsec" id="fsec-memo">メモ / Memo</div>
+  <div class="fg"><textarea id="f-memo" placeholder="見かけた時の感想など（任意）…" style="min-height:56px"></textarea></div>
 
   <div class="modal-actions">
     <button class="btn-cancel" onclick="closeModal('entry')">キャンセル</button>
@@ -337,14 +351,15 @@ const db = getDatabase(app);
 const S = {
   ja:{
     title:"散歩日記 — 花と鳥のデータベース",
+    titleEn:"Walking Diary — Flowers & Birds Database",
     sub:"ダラスの散歩で出会った花・植物・鳥の記録",
     langBtn:"🌐 English",
     catAll:"すべて", catF:"🌸 花・植物", catB:"🐦 鳥",
     sortOrd:"追加順", sortEN:"英語名順", sortJP:"日本語名順", sortDate:"見かけた日順",
-    searchPH:"名前・特徴で検索…",
+    searchPH:"名前・特徴・メモで検索…",
     addF:"＋ 花を追加", addB:"＋ 鳥を追加", addClaude:"🤖 Claudeから追加",
     flowerLabel:"花・植物", birdLabel:"鳥", totalLabel:"合計",
-    areaAll:"すべての場所",
+    areaAll:"すべての場所", monthAll:"すべての時期",
     edit:"✏️ 編集", del:"🗑️",
     save:"保存する", cancel:"キャンセル",
     addFlowerTitle:"🌸 新しい花・植物を追加",
@@ -352,10 +367,12 @@ const S = {
     editTitle:"✏️ 編集",
     secBasic:"基本情報", secJa:"日本語 詳細情報", secEn:"English Details",
     secLoc:"記録", secTags:"タグ（Enterで追加）", secPhotos:"写真（Google Drive URL）",
+    secMemo:"メモ",
     lblJp:"日本語名 *", lblEn:"英語名 *", lblSci:"学名",
     lblHlJa:"ハイライト（日本語）", lblHlEn:"Highlight (English)",
     lblLocDisp:"表示する場所名", lblLocArea:"大まかな場所（フィルター用）",
     lblDate:"見かけた日", lblState:"州 / State（検索用）", lblCountry:"国 / Country（検索用）",
+    lblMemo:"メモ（任意）",
     btnAddRowJa:"＋ 情報行を追加（日本語）", btnAddRowEn:"＋ Add info row (English)",
     btnAddPhoto:"＋ 写真URLを追加",
     footer:"散歩日記 花と鳥のデータベース — ダラスの散歩で出会った花・植物・鳥の記録",
@@ -364,14 +381,15 @@ const S = {
   },
   en:{
     title:"Walking Diary — Flowers & Birds Database",
+    titleEn:"散歩日記 — 花と鳥のデータベース",
     sub:"A record of flowers, plants & birds encountered on walks in Dallas",
     langBtn:"🌐 日本語",
     catAll:"All", catF:"🌸 Flowers", catB:"🐦 Birds",
     sortOrd:"Original Order", sortEN:"English Name", sortJP:"Japanese Name", sortDate:"Date Spotted",
-    searchPH:"Search by name or description…",
+    searchPH:"Search by name, description or note…",
     addF:"＋ Add Flower", addB:"＋ Add Bird", addClaude:"🤖 Add from Claude",
     flowerLabel:"Flowers", birdLabel:"Birds", totalLabel:"Total",
-    areaAll:"All Locations",
+    areaAll:"All Locations", monthAll:"All Dates",
     edit:"✏️ Edit", del:"🗑️",
     save:"Save", cancel:"Cancel",
     addFlowerTitle:"🌸 Add New Flower / Plant",
@@ -379,10 +397,12 @@ const S = {
     editTitle:"✏️ Edit",
     secBasic:"Basic Info", secJa:"Japanese Details", secEn:"English Details",
     secLoc:"Record", secTags:"Tags (press Enter to add)", secPhotos:"Photos (Google Drive URL)",
+    secMemo:"Memo / Note",
     lblJp:"Japanese Name *", lblEn:"English Name *", lblSci:"Scientific Name",
     lblHlJa:"Highlight (Japanese)", lblHlEn:"Highlight (English)",
     lblLocDisp:"Display Location Name", lblLocArea:"General Area (for filter)",
     lblDate:"Date Spotted", lblState:"State (for search)", lblCountry:"Country (for search)",
+    lblMemo:"Memo / Note (optional)",
     btnAddRowJa:"＋ 情報行を追加（日本語）", btnAddRowEn:"＋ Add info row (English)",
     btnAddPhoto:"＋ Add photo URL",
     footer:"Walking Diary — Flowers & Birds Database · Dallas walks",
@@ -392,7 +412,7 @@ const S = {
 };
 
 /* ── STATE ── */
-let lang='ja', cat='all', area='all', sortBy='order', searchQ='';
+let lang='ja', cat='all', area='all', sortBy='order', searchQ='', monthFilter='';
 let allEntries={}, currentTags=[], editId=null, editCat=null, confirmCb=null, photoIdx={};
 
 /* ── HELPERS ── */
@@ -432,6 +452,9 @@ function render(){
   // area filter
   if(area!=='all') entries = entries.filter(e=>e.locationArea===area);
 
+  // month/year filter
+  if(monthFilter) entries = entries.filter(e=>(e.date||'').startsWith(monthFilter));
+
   // search
   if(searchQ){
     const q=searchQ.toLowerCase();
@@ -443,6 +466,7 @@ function render(){
         || (e.locationDisplay||'').toLowerCase().includes(q)
         || (e.locationState||'').toLowerCase().includes(q)
         || (e.locationCountry||'').toLowerCase().includes(q)
+        || (e.memo||'').toLowerCase().includes(q)
         || rows.some(r=>(r.t||'').toLowerCase().includes(q)||(r.l||'').toLowerCase().includes(q))
         || (e.highlightJa||'').toLowerCase().includes(q)
         || (e.highlightEn||'').toLowerCase().includes(q);
@@ -474,6 +498,19 @@ function render(){
   document.getElementById('area-filters').innerHTML = areas.map(a=>
     `<button class="area-btn${a===area?' active':''}" onclick="setArea('${a}')">${a==='all'?s.areaAll:a}</button>`
   ).join('');
+
+  // month/year dropdown
+  const months = [...new Set(Object.values(allEntries).map(e=>e.date||'').filter(d=>d.length>=7).map(d=>d.slice(0,7)).sort())].reverse();
+  const monthSel = document.getElementById('month-sel');
+  const curMonth = monthSel.value;
+  monthSel.innerHTML = `<option value="">${s.monthAll}</option>` +
+    months.map(m=>{
+      const [y,mo]=m.split('-');
+      const label = lang==='ja' ? `${y}年${parseInt(mo)}月` : `${new Date(y,parseInt(mo)-1).toLocaleString('en',{month:'long'})} ${y}`;
+      return `<option value="${m}"${m===curMonth?' selected':''}>${label}</option>`;
+    }).join('');
+  if(months.length===0) monthSel.style.display='none';
+  else monthSel.style.display='';
 
   // cards
   const ca = document.getElementById('cards-area');
@@ -532,6 +569,7 @@ function makeCard(e,i){
   <div class="card-footer">
     ${e.locationDisplay?`<span class="card-loc">📍 ${e.locationDisplay}</span>`:''}
     ${e.date?`<span class="card-date">📅 ${e.date}</span>`:''}
+    ${e.memo?`<span class="card-memo">💬 ${e.memo}</span>`:''}
     <div class="card-actions">
       <button class="btn-edit" onclick="openEdit('${e._id}')">${s.edit}</button>
       <button class="btn-del"  onclick="askDel('${e._id}','${(e.jp||'').replace(/'/g,'&#39;')}')">${s.del}</button>
@@ -557,6 +595,7 @@ window.pNav=function(id,dir,total,photosStr){
 /* ── FILTER / SORT / SEARCH ── */
 window.setCat=function(c){ cat=c; ['all','flower','bird'].forEach(x=>{const el=document.getElementById('cat-'+x);if(el){el.classList.toggle('active',x===c);}}); render(); };
 window.setArea=function(a){ area=a; render(); };
+window.setMonth=function(v){ monthFilter=v; render(); };
 window.setSort=function(v){ sortBy=v; render(); };
 window.setSearch=function(v){ searchQ=v; render(); };
 
@@ -570,6 +609,7 @@ window.toggleLang=function(){
 
 function updateUI(s){
   document.getElementById('h-title').textContent=s.title;
+  document.getElementById('h-title-en').textContent=s.titleEn;
   document.getElementById('h-sub').textContent=s.sub;
   document.getElementById('lang-btn').textContent=s.langBtn;
   document.getElementById('cat-all').textContent=s.catAll;
@@ -612,6 +652,7 @@ window.openEdit=function(id){
   document.getElementById('f-date').value=e.date||'';
   document.getElementById('f-state').value=e.locationState||'';
   document.getElementById('f-country').value=e.locationCountry||'';
+  document.getElementById('f-memo').value=e.memo||'';
   toArr(e.photos).filter(Boolean).forEach(u=>addPhotoRow(u));
   renderTags();
   syncModalLang(e.category);
@@ -647,11 +688,13 @@ function syncModalLang(c){
   document.getElementById('btn-add-row-ja').textContent=s.btnAddRowJa;
   document.getElementById('btn-add-row-en').textContent=s.btnAddRowEn;
   document.getElementById('btn-add-photo').textContent=s.btnAddPhoto;
+  document.getElementById('fsec-memo').textContent=s.secMemo;
+  document.getElementById('f-memo').placeholder=lang==='ja'?'見かけた時の感想など（任意）…':'Notes, impressions, etc. (optional)…';
   document.getElementById('btn-save').textContent=s.save;
 }
 
 function clearForm(){
-  ['f-jp','f-en','f-sci','f-hl-ja','f-hl-en','f-loc-disp','f-loc-area','f-date','f-state','f-country'].forEach(id=>document.getElementById(id).value='');
+  ['f-jp','f-en','f-sci','f-hl-ja','f-hl-en','f-loc-disp','f-loc-area','f-date','f-state','f-country','f-memo'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('rows-ja').innerHTML='';
   document.getElementById('rows-en').innerHTML='';
   document.getElementById('photo-rows').innerHTML='';
@@ -710,6 +753,7 @@ window.saveEntry=function(){
     date:document.getElementById('f-date').value,
     locationState:document.getElementById('f-state').value.trim(),
     locationCountry:document.getElementById('f-country').value.trim(),
+    memo:document.getElementById('f-memo').value.trim(),
     tags:[...formTags],
     photos,
     order: editId ? (allEntries[editId]?.order??999) : Date.now(),
@@ -740,7 +784,8 @@ const TEMPLATE = {
   locationArea:"ダラス",
   locationState:"Texas",
   locationCountry:"USA",
-  date:"2026-05-22"
+  date:"2026-05-22",
+  memo:""
 };
 
 window.openClaude=function(){
