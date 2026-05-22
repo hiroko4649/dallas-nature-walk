@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seed — 花と鳥のデータベース</title>
+<style>
+  body{font-family:'Hiragino Sans',sans-serif;background:#f0f5ee;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}
+  .box{background:#fff;border-radius:16px;padding:2.5rem;max-width:480px;width:90%;box-shadow:0 4px 24px rgba(0,0,0,.1);text-align:center;}
+  h1{font-size:1.2rem;color:#2d6a4f;margin-bottom:.5rem;}
+  p{font-size:.88rem;color:#666;line-height:1.7;margin-bottom:1.5rem;}
+  .btn{background:#2d6a4f;color:#fff;border:none;padding:.85rem 2rem;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;width:100%;transition:background .2s;}
+  .btn:hover{background:#4a9e72;}
+  .btn:disabled{background:#aaa;cursor:not-allowed;}
+  .status{margin-top:1rem;font-size:.85rem;color:#444;min-height:1.5rem;}
+  .ok{color:#2d6a4f;font-weight:700;}
+  .err{color:#d00;font-weight:700;}
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>🌿 初期データ書き込みツール</h1>
+  <p>ボタンを押すと花22種・鳥5種のデータをFirebaseに書き込みます。<br>このページは最初の一回だけ使います。</p>
+  <button class="btn" id="btn" onclick="doSeed()">データを書き込む（27件）</button>
+  <div class="status" id="status"></div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+const app = initializeApp({
+    apiKey: "AIzaSyBL-1bIyHXWrkY1-YMfhffVTm_u6dmOHOI",
+    authDomain: "hiroko-nature-walk.firebaseapp.com",
+    databaseURL: "https://hiroko-nature-walk-default-rtdb.firebaseio.com",
+    projectId: "hiroko-nature-walk",
+    storageBucket: "hiroko-nature-walk.firebasestorage.app",
+    messagingSenderId: "509197032139",
+    appId: "1:509197032139:web:c03d5bf069f80db74a994e",
+    measurementId: "G-0R054Q6ECR"
+  });
+const db = getDatabase(app);
+const ENTRIES = [
+  {
+    "en": "Chinese Fringe Tree",
+    "jp": "ヒトツバタゴ（ナンジャモンジャ）",
+    "sci": "Chionanthus retusus",
+    "category": "flower",
+    "order": 0,
+    "rowsJa": [
+      {
+        "l": "原産",
+        "t": "中国・東アジア（日本・朝鮮半島にも自生）"
+      },
+      {
+        "l": "特徴",
+        "t": "春に白いふわふわとした房状の花を咲かせる落葉樹。花が散ると雪が降ったように見える"
+      },
+      {
+        "l": "日本名の由来",
+        "t": "「ナンジャモンジャ」の愛称は「これは何という木じゃ？」という驚きから来ている日本各地の地域的な呼び名"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin",
+        "t": "China and East Asia (also native to Japan and the Korean Peninsula)"
+      },
+      {
+        "l": "Features",
+        "t": "A deciduous tree with fluffy white fringe-like flower clusters in spring. When petals fall, it looks like a gentle snowfall."
+      },
+      {
+        "l": "Name Story",
+        "t": "The Japanese nickname 'Nanja Monja' comes from the exclamation 'What on earth IS this tree?!' — a charming regional folk name found across Japan."
+      }
+    ],
+    "highlightJa": "東京・日比谷公園の「ナンジャモンジャの木」が有名。ダラスではPacific Plazaなど公園の植栽に使われている",
+    "highlightEn": "The famous 'Nanja Monja Tree' at Hibiya Park in Tokyo draws crowds every spring. In Dallas, it can be spotted in park plantings like Pacific Plaza.",
+    "tags": [],
+    "locationDisplay": "Pacific Plaza付近・ダウンタウン散歩中",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Blue Rocky Mountain Columbine",
+    "jp": "ロッキーオダマキ",
+    "sci": "Aquilegia caerulea",
+    "category": "flower",
+    "order": 1,
+    "rowsJa": [
+      {
+        "l": "原産",
+        "t": "コロラド州・ロッキー山脈地域"
+      },
+      {
+        "l": "特徴",
+        "t": "青と白のツートンカラーが美しい。花びらの後ろに長い距（きょ）がある独特の形"
+      },
+      {
+        "l": "コロラド州の州花",
+        "t": "コロラド州の公式の州花として保護されている"
+      },
+      {
+        "l": "ダラスでは",
+        "t": "ダラスの夏の高温は苦手。春の涼しい時期のみ見られる"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin",
+        "t": "Colorado and the Rocky Mountain region"
+      },
+      {
+        "l": "Features",
+        "t": "Stunning blue-and-white two-tone petals. Distinguished by the long decorative spurs extending behind each petal."
+      },
+      {
+        "l": "Colorado State Flower",
+        "t": "Protected as the official state flower of Colorado."
+      },
+      {
+        "l": "In Dallas",
+        "t": "Struggles with Dallas's intense summer heat. Only visible during the cooler spring months."
+      }
+    ],
+    "highlightJa": "",
+    "highlightEn": "",
+    "tags": [],
+    "locationDisplay": "ダウンタウン散歩中",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Mandevilla / Dipladenia / Brazilian Jasmine",
+    "jp": "マンデビラ",
+    "sci": "Mandevilla spp.",
+    "category": "flower",
+    "order": 2,
+    "rowsJa": [
+      {
+        "l": "原産",
+        "t": "中南米（ブラジル・メキシコ）"
+      },
+      {
+        "l": "名前の整理",
+        "t": "Mandevilla（現正式属名）＝Dipladenia（旧名・今も使われる）＝Brazilian Jasmine（英語通称）。全て同じ植物"
+      },
+      {
+        "l": "特徴",
+        "t": "つる性の植物。白・ピンク・赤・複色など豊富。暑さに非常に強くダラスの夏の定番"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin",
+        "t": "Central and South America (Brazil, Mexico)"
+      },
+      {
+        "l": "Name Confusion",
+        "t": "Mandevilla (current scientific name) = Dipladenia (older name, still in use) = Brazilian Jasmine (common English name). All the same plant."
+      },
+      {
+        "l": "Features",
+        "t": "A climbing vine with abundant blooms in white, pink, red, and bicolor. Thrives in heat — a Dallas summer staple."
+      }
+    ],
+    "highlightJa": "本物のジャスミン（モクセイ科）とは全く別の植物。中南米原産なのでBrazilian Jasmineと呼ばれる",
+    "highlightEn": "Despite the name, it's completely unrelated to true jasmine (Oleaceae family). It's called 'Brazilian Jasmine' simply because of its South American origins.",
+    "tags": [
+      "熱帯系"
+    ],
+    "locationDisplay": "Ruibal's Garden（ファーマーズマーケット前）",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Monrovia Red Riding Hood Mandevilla",
+    "jp": "マンデビラ「赤ずきんちゃん」品種",
+    "sci": "Mandevilla sanderi 'Red Riding Hood'",
+    "category": "flower",
+    "order": 3,
+    "rowsJa": [
+      {
+        "l": "育種",
+        "t": "カリフォルニアのMonrovia社（Lowe'sでよく扱う高品質ブランド）が開発した品種"
+      },
+      {
+        "l": "特徴",
+        "t": "濃いピンク色の花に黄色い中心部。「赤ずきんちゃん」という名前通りの鮮やかな色"
+      },
+      {
+        "l": "発見場所",
+        "t": "Lowe'sのサイトで名前を確認"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Breeder",
+        "t": "Developed by Monrovia Nursery (California), a premium brand commonly carried by Lowe's."
+      },
+      {
+        "l": "Features",
+        "t": "Deep pink flowers with a bright yellow center — as vivid as the 'Red Riding Hood' name suggests."
+      },
+      {
+        "l": "How Found",
+        "t": "Name confirmed on the Lowe's website."
+      }
+    ],
+    "highlightJa": "",
+    "highlightEn": "",
+    "tags": [],
+    "locationDisplay": "散歩中",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Angelonia / Summer Snapdragon",
+    "jp": "アンゲロニア",
+    "sci": "Angelonia salicariifolia",
+    "category": "flower",
+    "order": 4,
+    "rowsJa": [
+      {
+        "l": "原産",
+        "t": "メキシコ・中米・熱帯アメリカ"
+      },
+      {
+        "l": "別名",
+        "t": "Summer Snapdragon（夏のスナップドラゴン）"
+      },
+      {
+        "l": "特徴",
+        "t": "茎の先端から下から上へと順番に小さな花が咲いていく。葉に触れるとグレープのような甘い香り。花色は紫・ピンク・白など"
+      },
+      {
+        "l": "最初の観察",
+        "t": "白い小さな花が「水滴のよう」に見えた→まだつぼみの状態だった可能性大。茎全体に咲き揃うと全く違う印象になる"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin",
+        "t": "Mexico, Central America, and tropical America"
+      },
+      {
+        "l": "Nickname",
+        "t": "Summer Snapdragon"
+      },
+      {
+        "l": "Features",
+        "t": "Flowers bloom progressively from the base to the tip of the stem. Leaves have a sweet, grape-like fragrance when touched. Comes in purple, pink, and white."
+      },
+      {
+        "l": "First Sighting",
+        "t": "The small white flowers looked like 'tiny water droplets' — likely still in bud stage. The plant looks completely different once fully in bloom."
+      }
+    ],
+    "highlightJa": "ダラスの夏の猛暑に非常に強い。今（5月）の植え付けシーズンから秋まで咲き続ける優秀な夏の花",
+    "highlightEn": "Thrives in Dallas's brutal summer heat. Plant in May and it blooms continuously right through fall — a true summer workhorse.",
+    "tags": [
+      "夏に強い"
+    ],
+    "locationDisplay": "ダウンタウン散歩中",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Oakleaf Hydrangea",
+    "jp": "カシワバアジサイ（柏葉紫陽花）",
+    "sci": "Hydrangea quercifolia",
+    "category": "flower",
+    "order": 5,
+    "rowsJa": [
+      {
+        "l": "原産",
+        "t": "アメリカ南東部（テキサス・ジョージア・アラバマなど）が原産地"
+      },
+      {
+        "l": "特徴",
+        "t": "カシワの葉に似た大きな葉。花は白い円錐形（縦長）。秋には紅葉も楽しめる。テキサスの猛暑・乾燥に強い"
+      },
+      {
+        "l": "ダラスで多い理由",
+        "t": "もともと南東部が故郷なのでダラスの気候はほぼ「故郷」。MopheadよりもOakleafの方がダラスに圧倒的に向いている"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin",
+        "t": "Native to the American Southeast (Texas, Georgia, Alabama)"
+      },
+      {
+        "l": "Features",
+        "t": "Large leaves resembling oak leaves. White cone-shaped flower clusters. Beautiful fall foliage too. Excellent heat and drought tolerance."
+      },
+      {
+        "l": "Why Common in Dallas",
+        "t": "The Southeast is its native homeland, so Dallas's climate is essentially 'home turf.' Far better suited to Dallas than Mophead varieties."
+      }
+    ],
+    "highlightJa": "Pacific Plazaに茂みとして植えられている。その中に1〜2株のMophead Hydrangea（ピンク）が混じっているのをHirokoさんが発見！設計者の意図的なアクセント植栽の可能性",
+    "highlightEn": "Found as large shrubs in Pacific Plaza. Among them, Hiroko spotted 1-2 Mophead Hydrangeas (pink) — likely an intentional design accent by the landscape architect.",
+    "tags": [
+      "テキサス向き"
+    ],
+    "locationDisplay": "Pacific Plaza・ダウンタウン各所",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Mophead Hydrangea",
+    "jp": "セイヨウアジサイ（西洋紫陽花）",
+    "sci": "Hydrangea macrophylla",
+    "category": "flower",
+    "order": 6,
+    "rowsJa": [
+      {
+        "l": "原産の経緯",
+        "t": "日本原産のアジサイ（ガクアジサイ）がヨーロッパに渡り品種改良→丸くてゴージャスなMopheadが誕生→日本に逆輸入されて「西洋紫陽花」に"
+      },
+      {
+        "l": "名前の由来",
+        "t": "「Mophead（モップヘッド）」＝モップのようにもこもこと丸く花が集まる形から"
+      },
+      {
+        "l": "ダラスとの相性",
+        "t": "ヨーロッパの温暖湿潤な気候向けに品種改良されたため、ダラスの猛暑には弱い。日陰で管理された場所でのみ生存可能"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin Story",
+        "t": "Japan's native lacecap hydrangea traveled to Europe → was bred into the lush, round Mophead → was re-imported back to Japan as 'Western Hydrangea'"
+      },
+      {
+        "l": "Name Origin",
+        "t": "'Mophead' refers to the round, puffy flower clusters that resemble the head of a mop."
+      },
+      {
+        "l": "Dallas Compatibility",
+        "t": "Bred for Europe's temperate, humid climate — struggles badly in Dallas heat. Can only survive in carefully managed, shady spots."
+      }
+    ],
+    "highlightJa": "「日本の紫陽花のように丸い」と感じたのは正確！元をたどれば日本原産。今の日本の梅雨時に街中で見る丸いあじさいはほとんどがこのMophead",
+    "highlightEn": "Your instinct that it 'looks just like Japanese hydrangea' was spot on! It originally came from Japan. The round hydrangeas filling Japanese streets during rainy season are almost all Mopheads.",
+    "tags": [
+      "日本原産→逆輸入"
+    ],
+    "locationDisplay": "Pacific Plaza（Oakleafの茂みの中に少数）",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Daylily",
+    "jp": "ヘメロカリス",
+    "sci": "Hemerocallis spp.",
+    "category": "flower",
+    "order": 7,
+    "rowsJa": [
+      {
+        "l": "原産",
+        "t": "東アジア（中国・日本・朝鮮半島）"
+      },
+      {
+        "l": "名前の意味",
+        "t": "Hemerocallis＝ギリシャ語で「一日の美しさ」。一輪の花は一日しか咲かないが次々と新しい花が咲くため長期間楽しめる"
+      },
+      {
+        "l": "日本の仲間",
+        "t": "ニッコウキスゲ・ノカンゾウ・ヤブカンゾウなどが日本の在来種。日本の野山でも見られる"
+      },
+      {
+        "l": "ダラスとの相性",
+        "t": "暑さ・乾燥に非常に強い。ローメンテナンスで育てやすく街路や公園の定番"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin",
+        "t": "East Asia (China, Japan, Korean Peninsula)"
+      },
+      {
+        "l": "Name Meaning",
+        "t": "Hemerocallis comes from Greek meaning 'beauty for a day.' Each flower lasts only one day, but new blooms keep opening for weeks."
+      },
+      {
+        "l": "Japanese Relatives",
+        "t": "Nikko Kisuge, Nokanzo, and Yabu Kanzo are native Japanese species, seen in the wild across Japan's mountains."
+      },
+      {
+        "l": "Dallas Compatibility",
+        "t": "Extremely heat and drought tolerant. Low-maintenance and a common sight along streets and in parks."
+      }
+    ],
+    "highlightJa": "黄色い花で発見。東アジア原産だが品種改良が進み世界中で親しまれている",
+    "highlightEn": "Spotted in yellow. Originally from East Asia, but centuries of breeding have made it beloved worldwide.",
+    "tags": [
+      "東アジア原産"
+    ],
+    "locationDisplay": "ダウンタウン散歩中",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Mystic Spires Blue Salvia",
+    "jp": "サルビア「ミスティックスパイアーズ・ブルー」",
+    "sci": "Salvia 'Mystic Spires Blue'",
+    "category": "flower",
+    "order": 8,
+    "rowsJa": [
+      {
+        "l": "育種",
+        "t": "Monrovia社（Red Riding Hood Mandevillaと同じブランド）が開発したサルビアの品種"
+      },
+      {
+        "l": "特徴",
+        "t": "鮮やかな青紫色の花穂がすらりと縦に伸びる。高さ60〜90cm。春から霜が降りるまで長期間咲き続ける"
+      },
+      {
+        "l": "ダラスとの相性",
+        "t": "暑さ・乾燥に非常に強い。ハチドリ・蝶を引き寄せる"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Breeder",
+        "t": "Developed by Monrovia Nursery — the same brand behind Red Riding Hood Mandevilla."
+      },
+      {
+        "l": "Features",
+        "t": "Vivid blue-purple flower spikes that rise elegantly upward. Grows 24–36 inches tall. Blooms continuously from spring until frost."
+      },
+      {
+        "l": "Dallas Compatibility",
+        "t": "Extremely heat and drought tolerant. Attracts hummingbirds and butterflies."
+      }
+    ],
+    "highlightJa": "HarwoodパークでArtemisia（ヨモギ属・グリーンの葉）との組み合わせで植栽されている。緑の葉から青紫の花穂がすっと伸びるシンプルで洗練された組み合わせ",
+    "highlightEn": "Found planted alongside Artemisia (silver-green foliage) at Harwood Park — a sleek, sophisticated combo where vivid purple spikes emerge from silvery groundcover.",
+    "tags": [
+      "テキサス向き"
+    ],
+    "locationDisplay": "Harwood Park",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Autumn Sage",
+    "jp": "サルビア・グレッギー（オータムセージ）",
+    "sci": "Salvia greggii",
+    "category": "flower",
+    "order": 9,
+    "rowsJa": [
+      {
+        "l": "原産",
+        "t": "メキシコ・テキサス西部"
+      },
+      {
+        "l": "名前の整理",
+        "t": "Salvia greggii（学名）＝Autumn Sage（英語一般名）。同じ植物"
+      },
+      {
+        "l": "開花パターン",
+        "t": "春〜初夏に咲き、真夏は少し休み、秋に再び咲く二回咲き。「Autumn（秋）」という名前だが春も咲くお得な植物"
+      },
+      {
+        "l": "花色",
+        "t": "赤が最も一般的。他にピンク・サーモン・白・紫など多数の品種"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin",
+        "t": "Mexico and West Texas"
+      },
+      {
+        "l": "Name Clarification",
+        "t": "Salvia greggii (scientific name) = Autumn Sage (common name). Same plant."
+      },
+      {
+        "l": "Bloom Pattern",
+        "t": "Blooms spring through early summer, rests through peak summer, then blooms again in fall. Despite 'Autumn' in the name, it blooms in spring too — a real two-for-one plant."
+      },
+      {
+        "l": "Colors",
+        "t": "Red is most common, but also comes in pink, salmon, white, and purple."
+      }
+    ],
+    "highlightJa": "Mexican Bush Sageと一緒に植えられることが多い。秋になるとMexican Bush Sageが紫に咲き、Autumn Sageも赤く再び咲いて「赤×紫」の競演に！",
+    "highlightEn": "Often paired with Mexican Bush Sage — the classic Dallas combo. Come fall, Mexican Bush Sage blazes purple while Autumn Sage blooms red again — a stunning red-and-purple duet!",
+    "tags": [
+      "テキサス原産"
+    ],
+    "locationDisplay": "ダウンタウン各所・公園",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Mexican Bush Sage",
+    "jp": "メキシカンブッシュセージ",
+    "sci": "Salvia leucantha",
+    "category": "flower",
+    "order": 10,
+    "rowsJa": [
+      {
+        "l": "原産",
+        "t": "メキシコ・中米の熱帯・亜熱帯地域"
+      },
+      {
+        "l": "開花パターン",
+        "t": "春〜夏は葉が茂るだけで花はほぼ咲かない。秋〜初冬が本番の開花期。紫のふわふわした花穂が美しい"
+      },
+      {
+        "l": "5月時点",
+        "t": "画像検索で出るような「わんさか咲いている状態」ではない→秋になると「わっと」咲く。今は準備中"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin",
+        "t": "Tropical and subtropical regions of Mexico and Central America"
+      },
+      {
+        "l": "Bloom Pattern",
+        "t": "Spring through summer: all foliage, almost no flowers. Fall through early winter: the real show begins, with gorgeous fuzzy purple spikes."
+      },
+      {
+        "l": "In May",
+        "t": "Don't be fooled by image searches showing it in full bloom — in spring it's just green and 'getting ready.' The explosion comes in fall."
+      }
+    ],
+    "highlightJa": "Autumn Sageとペアで植えられる「ダラス定番コンビ」。設計者の計算された植栽で、春と秋に交互に主役が入れ替わるよう設計されている",
+    "highlightEn": "The partner plant in the 'Dallas Classic Combo' with Autumn Sage. A perfectly calculated planting design where the two plants take turns as the star attraction across seasons.",
+    "tags": [],
+    "locationDisplay": "ダウンタウン各所",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Zinnia",
+    "jp": "ヒャクニチソウ（百日草）",
+    "sci": "Zinnia elegans",
+    "category": "flower",
+    "order": 11,
+    "rowsJa": [
+      {
+        "l": "原産",
+        "t": "メキシコ"
+      },
+      {
+        "l": "名前の由来",
+        "t": "「百日草」＝百日間（約3ヶ月）咲き続けるほど花期が長いことから"
+      },
+      {
+        "l": "特徴",
+        "t": "オレンジ・黄色・赤・ピンク・白など鮮やか。種から育てやすく直射日光が大好き"
+      },
+      {
+        "l": "ダリアとの関係",
+        "t": "見た目が似ているが別属。どちらもキク科・メキシコ原産という共通点あり"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin",
+        "t": "Mexico"
+      },
+      {
+        "l": "Name Origin",
+        "t": "'Hyakunichisou' (百日草) means 'hundred-day flower' — reflecting its remarkably long blooming season of about three months."
+      },
+      {
+        "l": "Features",
+        "t": "Vibrant oranges, yellows, reds, pinks, and whites. Easy to grow from seed; loves full sun."
+      },
+      {
+        "l": "vs. Dahlia",
+        "t": "Similar in appearance but a different genus. Both share being Asteraceae (daisy family) and Mexican origin."
+      }
+    ],
+    "highlightJa": "メキシコ原産なのでダラスの夏に非常に強い。今（5月）から植えて夏中楽しめる。ヒマワリ・コスモスと同じキク科",
+    "highlightEn": "Its Mexican origins make it perfectly suited to Dallas summers. Plant in May and enjoy blooms all summer long. Same Asteraceae family as sunflowers and cosmos.",
+    "tags": [
+      "メキシコ原産",
+      "夏に強い"
+    ],
+    "locationDisplay": "Ruibal's Garden",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Artemisia",
+    "jp": "アルテミシア（ヨモギ属）",
+    "sci": "Artemisia spp.",
+    "category": "flower",
+    "order": 12,
+    "rowsJa": [
+      {
+        "l": "特徴",
+        "t": "「春菊のようなデイジーの葉のような植物」→葉を楽しむ植物。花は非常に小さく目立たない（観賞価値ほぼなし）"
+      },
+      {
+        "l": "用途",
+        "t": "葉の色・質感のアクセントとして植栽に使われる。Mystic Spiresとの組み合わせが定番"
+      },
+      {
+        "l": "仲間たち",
+        "t": "ヨモギ（草餅・お灸のもぐさ）・タラゴン（フランス料理のハーブ）・ワームウッド（苦味酒アブサンの原料）も同じ属"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Features",
+        "t": "'Looks like chrysanthemum or daisy leaves' — grown for its silvery foliage, not its tiny, insignificant flowers."
+      },
+      {
+        "l": "Use",
+        "t": "Valued as a textural silver accent in landscape planting. Classic combination with Mystic Spires Blue Salvia."
+      },
+      {
+        "l": "Family Members",
+        "t": "Japanese mugwort (used in mochi and moxa), tarragon (French cooking herb), and wormwood (the bitter base of absinthe) all belong to this genus."
+      }
+    ],
+    "highlightJa": "HarwoodパークでMystic Spiresとコンビで植栽。緑の葉の中から青紫の花穂が伸びる洗練されたデザイン",
+    "highlightEn": "Found planted as a combination with Mystic Spires at Harwood Park — a sophisticated design where vivid purple spikes rise from the silver-green foliage.",
+    "tags": [],
+    "locationDisplay": "Harwood Park",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Celosia / Cockscomb",
+    "jp": "ケイトウ（鶏頭）",
+    "sci": "Celosia argentea",
+    "category": "flower",
+    "order": 13,
+    "rowsJa": [
+      {
+        "l": "名前の由来",
+        "t": "「鶏頭（ケイトウ）」＝花の形が鶏のトサカ（鶏冠）に似る。英語のCockscomb（コックスコーム）も同じ意味"
+      },
+      {
+        "l": "種類",
+        "t": "Cristata（トサカ型）・Plumosa（羽毛状）・Spicata（細長い穂状）などのタイプがある"
+      },
+      {
+        "l": "日本との縁",
+        "t": "日本ではお盆の仏花として定番。Globe Amaranth（センニチコウ）とお盆コンビとして親しまれている"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Name Origin",
+        "t": "'Keitou' (鶏頭) means 'cockscomb' — the flowers resemble a rooster's crest. The English name 'Cockscomb' means exactly the same thing."
+      },
+      {
+        "l": "Varieties",
+        "t": "Cristata (crested/cockscomb), Plumosa (feathery plume), and Spicata (slim spike) types."
+      },
+      {
+        "l": "Connection to Japan",
+        "t": "A classic Japanese obon (Buddhist memorial) flower, traditionally paired with Globe Amaranth as the beloved 'obon duo.'"
+      }
+    ],
+    "highlightJa": "Ruibal'sで赤と黄色のCelosiaを発見。ダラスの夏の猛暑に非常に強い",
+    "highlightEn": "Spotted in red and yellow at Ruibal's. Extremely heat-tolerant — an ideal Dallas summer flower.",
+    "tags": [],
+    "locationDisplay": "Ruibal's Garden",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Globe Amaranth",
+    "jp": "センニチコウ（千日紅）",
+    "sci": "Gomphrena globosa",
+    "category": "flower",
+    "order": 14,
+    "rowsJa": [
+      {
+        "l": "名前の由来",
+        "t": "「千日紅（センニチコウ）」＝千日間色が褪せないほど花持ちが良い。Globe（球）＋Amaranth（色あせない）も同じ意味"
+      },
+      {
+        "l": "特徴",
+        "t": "まさに「ベリーみたいなレンゲみたいな」丸いボール状の花。ショッキングピンク・紫・白・赤・オレンジなど。ドライフラワーにしても色が長持ち"
+      },
+      {
+        "l": "日本との縁",
+        "t": "ケイトウと並ぶお盆の仏花定番。日本の夏の風物詩的な花"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Name Origin",
+        "t": "'Sennnichiku' (千日紅) means 'thousand-day red' — its color barely fades even when dried. 'Globe Amaranth' means the same: globe (round) + amaranth (unfading)."
+      },
+      {
+        "l": "Features",
+        "t": "Perfect round ball-shaped blooms in shocking pink, purple, white, red, and orange. Excellent for dried flowers — the color holds beautifully."
+      },
+      {
+        "l": "Connection to Japan",
+        "t": "Classic Japanese obon memorial flower alongside Celosia. A quintessential symbol of Japanese summer."
+      }
+    ],
+    "highlightJa": "「ベリーみたいなレンゲみたいなショッキングピンクの花」という表現がぴったりの可愛い花",
+    "highlightEn": "'Like a colorful berry or a tiny lotus in shocking pink' — a perfect description of this irresistibly charming little flower.",
+    "tags": [
+      "中南米・熱帯アジア原産"
+    ],
+    "locationDisplay": "散歩中・公園",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Pink Poppet Weigela",
+    "jp": "ウェイゲラ「ピンク・ポペット」（タニウツギ属）",
+    "sci": "Weigela florida 'Pink Poppet'",
+    "category": "flower",
+    "order": 15,
+    "rowsJa": [
+      {
+        "l": "原産",
+        "t": "東アジア（中国・日本・朝鮮半島）"
+      },
+      {
+        "l": "「Pink Poppet」とは",
+        "t": "コンパクトサイズの矮性品種。60〜90cm程度でこんもりとまとまった樹形。春〜初夏にピンクの花がびっしり咲く"
+      },
+      {
+        "l": "ダラスとの相性",
+        "t": "本来涼しい温帯気候を好むためダラスの猛暑はやや苦手。日陰〜半日陰の場所なら比較的育てやすい"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin",
+        "t": "East Asia (China, Japan, Korean Peninsula)"
+      },
+      {
+        "l": "What is 'Pink Poppet'?",
+        "t": "A compact dwarf variety, growing only 24–36 inches tall with a neat, mounded form. Smothered in pink blooms from spring through early summer."
+      },
+      {
+        "l": "Dallas Compatibility",
+        "t": "Prefers cooler temperate climates, so Dallas's extreme heat is challenging. Best in shade to partial shade."
+      }
+    ],
+    "highlightJa": "Love Fieldの新しいObservation Areaに植えられているのを発見。空港の植栽として管理された環境で育てられている",
+    "highlightEn": "Spotted at the new Observation Area at Love Field Airport — thriving under the managed care of the airport's landscape team.",
+    "tags": [
+      "東アジア原産"
+    ],
+    "locationDisplay": "Love Field空港 Observation Area",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Turk's Cap",
+    "jp": "マルバビスカス（ターク's キャップ）",
+    "sci": "Malvaviscus arboreus",
+    "category": "flower",
+    "order": 16,
+    "rowsJa": [
+      {
+        "l": "原産",
+        "t": "テキサス・メキシコ・中央アメリカ"
+      },
+      {
+        "l": "名前の由来",
+        "t": "花びらが完全に開かず「くるくると巻いたまま」の形がオスマントルコの帽子（フェズ帽）に似ることから"
+      },
+      {
+        "l": "科",
+        "t": "アオイ科（ハイビスカスの仲間）"
+      },
+      {
+        "l": "食用",
+        "t": "花・実ともに食べられる。メキシコでは「コロラリート」と呼ばれ伝統的に食用にされてきた。花はサラダに、実はジャム・ゼリーに"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin",
+        "t": "Texas, Mexico, and Central America"
+      },
+      {
+        "l": "Name Origin",
+        "t": "The petals never fully open — they stay permanently furled in a spiral, resembling the fez hat worn by Ottoman Turks."
+      },
+      {
+        "l": "Family",
+        "t": "Malvaceae (hibiscus family)"
+      },
+      {
+        "l": "Edible",
+        "t": "Both flowers and berries are edible. Known in Mexico as 'Coloradito' — flowers in salads, berries as jam or jelly."
+      }
+    ],
+    "highlightJa": "テキサスのネイティブプランツ（在来植物）の代表格。猛暑・乾燥に超強く、ハチドリ・蝶・ミツバチを引き寄せる。冬に地上部が枯れても春に復活する",
+    "highlightEn": "A quintessential Texas native plant. Survives extreme heat and drought, attracting hummingbirds, butterflies, and bees. Dies back in winter but faithfully returns every spring.",
+    "tags": [
+      "テキサス原産",
+      "食用可"
+    ],
+    "locationDisplay": "公園",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Chaste Tree",
+    "jp": "セイヨウニンジンボク（西洋人参木）",
+    "sci": "Vitex agnus-castus",
+    "category": "flower",
+    "order": 17,
+    "rowsJa": [
+      {
+        "l": "原産",
+        "t": "地中海沿岸〜中央アジア"
+      },
+      {
+        "l": "名前の由来",
+        "t": "「Chaste（純潔な）」Tree＝古代ギリシャ・ローマ時代に性欲を抑える効果があると信じられ、修道士や尼僧が使っていたとされることから。学名agnus-castusもラテン語で「純潔な子羊」の意味"
+      },
+      {
+        "l": "特徴",
+        "t": "夏〜秋（6〜9月）に紫・ラベンダー色の穂状の花を咲かせる。葉にハーブのような爽やかな香り"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin",
+        "t": "Mediterranean coast to Central Asia"
+      },
+      {
+        "l": "Name Origin",
+        "t": "Called 'Chaste Tree' because in ancient Greece and Rome it was believed to suppress desire — reportedly used by monks and nuns. The scientific name agnus-castus means 'pure, chaste lamb' in Latin."
+      },
+      {
+        "l": "Features",
+        "t": "Produces beautiful purple to lavender flower spikes from summer through fall (June–September). Foliage has a fresh, herby fragrance."
+      }
+    ],
+    "highlightJa": "Thanks-Giving Square（フィリップ・ジョンソン設計・1976年完成）に植えられている。「神聖な木」として知られる植物がこの感謝の聖地に選ばれているのは意図的かもしれない",
+    "highlightEn": "Planted at Thanks-Giving Square (designed by Philip Johnson, completed 1976). The placement of this historically 'sacred tree' in this place of gratitude may well be intentional.",
+    "tags": [],
+    "locationDisplay": "Thanks-Giving Square",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Crape Myrtle",
+    "jp": "サルスベリ（百日紅）",
+    "sci": "Lagerstroemia indica",
+    "category": "flower",
+    "order": 18,
+    "rowsJa": [
+      {
+        "l": "原産",
+        "t": "中国・東アジア（インド・東南アジアも含む）"
+      },
+      {
+        "l": "日本名の由来",
+        "t": "「百日紅（サルスベリ）」の2つの意味：①百日間咲き続ける長い花期 ②樹皮がツルツルしていてサルも滑る"
+      },
+      {
+        "l": "英語名の由来",
+        "t": "「Crape（クレープ）」＝薄い布のようにひらひらした花びらの質感から"
+      },
+      {
+        "l": "日本との違い",
+        "t": "ダラスでは大木になる品種が多く5〜10m以上になることも。日本よりはるかに大きく街路樹として堂々とした姿"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin",
+        "t": "China and East Asia (also India and Southeast Asia)"
+      },
+      {
+        "l": "Japanese Name",
+        "t": "'Hyakunichiko' (百日紅, Sarusuberi) has two meanings: ① flowers that bloom for 100 days straight ② bark so smooth that even monkeys slip on it (saru = monkey, suberi = slip)."
+      },
+      {
+        "l": "English Name",
+        "t": "'Crape' refers to the crepe-paper-like texture of the delicate, ruffled petals."
+      },
+      {
+        "l": "vs. Japan",
+        "t": "Dallas varieties grow much larger — often 15–30 feet tall, far more imposing than the garden-sized Japanese versions."
+      }
+    ],
+    "highlightJa": "ダラスで最もよく見かける街路樹・庭木のひとつ。テキサスの気候に完璧にマッチ。6〜8月のピーク時には街全体がピンク・白・赤に彩られるダラスの夏の風物詩",
+    "highlightEn": "One of Dallas's most ubiquitous street trees — a perfect match for Texas's climate. At peak bloom in June–August, entire neighborhoods blaze pink, white, and red. The defining image of a Dallas summer.",
+    "tags": [
+      "東アジア原産",
+      "ダラス定番"
+    ],
+    "locationDisplay": "ダウンタウン各所・街路樹として至る所に",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Holy Basil / Tulsi",
+    "jp": "カミメボウキ（神目箒）/ ホーリーバジル",
+    "sci": "Ocimum tenuiflorum",
+    "category": "flower",
+    "order": 19,
+    "rowsJa": [
+      {
+        "l": "タイ語名",
+        "t": "ガパオ（Krapao）—タイ料理で有名な「ガパオライス（鶏ひき肉炒め）」のガパオはこの植物のこと"
+      },
+      {
+        "l": "特徴",
+        "t": "スパイシー・クローブに似た香り。普通のバジル（スイートバジル）より刺激が強い"
+      },
+      {
+        "l": "カプレーゼには？",
+        "t": "向かない。カプレーゼにはスイートバジル（Genovese Basil）が最適"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Thai Name",
+        "t": "Krapao (กะเพรา) — the 'gapao' in the famous Thai dish 'Gapao Rice' (stir-fried minced chicken with basil) is this very plant."
+      },
+      {
+        "l": "Features",
+        "t": "Spicy, clove-like aroma. More pungent and assertive than sweet basil."
+      },
+      {
+        "l": "For Caprese?",
+        "t": "Not recommended. Sweet basil (Genovese) is the right choice for Caprese salad."
+      }
+    ],
+    "highlightJa": "スイートバジルと見た目は似ているが香りが全く違う。タイ料理好きの方はぜひ育ててみると本格ガパオライスが家で作れる",
+    "highlightEn": "Looks similar to sweet basil but the aroma is completely different. If you love Thai food, try growing it — you'll be able to make authentic Gapao Rice at home!",
+    "tags": [],
+    "locationDisplay": "Ruibal's Garden",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Lemon Basil",
+    "jp": "レモンバジル",
+    "sci": "Ocimum × citriodorum",
+    "category": "flower",
+    "order": 20,
+    "rowsJa": [
+      {
+        "l": "特徴",
+        "t": "レモンのような爽やかな柑橘系の香りがする。普通のバジルより葉が小さめ"
+      },
+      {
+        "l": "使い方",
+        "t": "タイ・インドネシアなど東南アジア料理、魚料理、デザート、ハーブティーに合う"
+      },
+      {
+        "l": "カプレーゼには？",
+        "t": "レモンの酸味が個性的すぎてチーズと喧嘩する可能性あり。カプレーゼにはやはりスイートバジルが一番"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Features",
+        "t": "A fresh, bright citrusy lemon aroma. Leaves are slightly smaller than regular basil."
+      },
+      {
+        "l": "Uses",
+        "t": "Excellent in Thai and Indonesian cuisine, with fish dishes, desserts, and herbal teas."
+      },
+      {
+        "l": "For Caprese?",
+        "t": "The assertive lemon acidity can clash with the cheese. Sweet basil wins for Caprese every time."
+      }
+    ],
+    "highlightJa": "Holy BasilもLemon Basilも個性的な香りを持つ。カプレーゼにはGenovese（スイート）バジルを！",
+    "highlightEn": "Both Holy Basil and Lemon Basil have strong, distinctive personalities. For Caprese, always go with Genovese (sweet) basil!",
+    "tags": [],
+    "locationDisplay": "Ruibal's Garden",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Goldsturm Black-Eyed Susan",
+    "jp": "ルドベキア「ゴールドスタルム」",
+    "sci": "Rudbeckia fulgida var. sullivantii 'Goldsturm'",
+    "category": "flower",
+    "order": 21,
+    "rowsJa": [
+      {
+        "l": "原産",
+        "t": "北アメリカ"
+      },
+      {
+        "l": "名前の由来",
+        "t": "Black-Eyed（黒い目）＝花の中心部が濃い茶色〜黒で「黒い目」のように見える。Susan＝17〜18世紀のイギリスの詩から来た愛称。Goldsturm＝ドイツ語で「金の嵐」"
+      },
+      {
+        "l": "特徴",
+        "t": "鮮やかな黄色〜オレンジ黄色の花と黒い中心部。花期が夏〜秋と非常に長い。多年草なので毎年咲く"
+      },
+      {
+        "l": "ヒマワリとの違い",
+        "t": "同じキク科で見た目が似るが、Black-Eyed Susanは花が5〜8cmと小さく、多年草で、中心部がより黒い"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Origin",
+        "t": "North America"
+      },
+      {
+        "l": "Name Origin",
+        "t": "'Black-Eyed' refers to the dark brown-to-black cone in the flower's center. Susan comes from an 18th-century English poem. 'Goldsturm' means 'gold storm' in German."
+      },
+      {
+        "l": "Features",
+        "t": "Vivid golden-yellow flowers with dark centers. Extremely long bloom season from summer through fall. Perennial — returns every year."
+      },
+      {
+        "l": "vs. Sunflower",
+        "t": "Both are Asteraceae and similar-looking, but Black-Eyed Susan is much smaller (2–3 inches across), perennial, and has a darker center."
+      }
+    ],
+    "highlightJa": "多年草なのでローメンテナンス。ダラスの暑さ・乾燥にも強くハチドリ・蝶を引き寄せる。切り花としても人気",
+    "highlightEn": "Low-maintenance perennial that handles Dallas heat and drought beautifully. Attracts hummingbirds and butterflies. Makes a wonderful cut flower too.",
+    "tags": [
+      "北米原産",
+      "テキサス向き"
+    ],
+    "locationDisplay": "散歩中・公園",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Common Starling / European Starling",
+    "jp": "ホシムクドリ（星椋鳥）",
+    "sci": "Sturnus vulgaris",
+    "category": "bird",
+    "order": 22,
+    "rowsJa": [
+      {
+        "l": "科",
+        "t": "ムクドリ科（Sturnidae）—本物のムクドリ。Great-tailed Grackle（ムクドリ「モドキ」）とは別科"
+      },
+      {
+        "l": "原産",
+        "t": "ヨーロッパ・西アジア"
+      },
+      {
+        "l": "アメリカへの経緯",
+        "t": "1890年にニューヨークの薬剤師ユージン・シーフェリンが「シェイクスピアの作品に登場する鳥を全部アメリカに持ち込みたい」という奇妙な動機でセントラルパークに60羽を放鳥。その60羽が今や全米3億羽以上に増殖！"
+      },
+      {
+        "l": "見た目",
+        "t": "黒っぽい羽に緑・紫の金属光沢。冬は白い斑点（星のような模様→「ホシ」の名の由来）。夏は斑点が消えてつやつやした黒に"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Family",
+        "t": "Sturnidae — a true starling. Not related to the Great-tailed Grackle, which belongs to a completely different family."
+      },
+      {
+        "l": "Origin",
+        "t": "Europe and West Asia"
+      },
+      {
+        "l": "How It Got to America",
+        "t": "In 1890, a New York pharmacist named Eugene Schieffelin, obsessed with introducing every bird mentioned in Shakespeare to America, released 60 starlings in Central Park. Those 60 birds have since multiplied to over 300 million across North America!"
+      },
+      {
+        "l": "Appearance",
+        "t": "Dark plumage with iridescent green and purple sheen. In winter: covered in white speckles (like stars → origin of the Japanese name 'Hoshi' = star). In summer: speckles fade, leaving glossy pure black."
+      }
+    ],
+    "highlightJa": "ムルムレーション（Murmuration）：数万〜数十万羽が一体となって空中で複雑な模様を描く集団飛行が有名。ダラス周辺でも秋〜冬に見られることがある",
+    "highlightEn": "Famous for murmurations — breathtaking aerial displays where tens of thousands of birds move as one fluid, shape-shifting mass in the sky. Can be witnessed in the Dallas area in fall and winter.",
+    "tags": [
+      "外来種（ヨーロッパ原産）"
+    ],
+    "locationDisplay": "ダウンタウン・公園",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Great-tailed Grackle",
+    "jp": "オナガクロムクドリモドキ",
+    "sci": "Quiscalus mexicanus",
+    "category": "bird",
+    "order": 23,
+    "rowsJa": [
+      {
+        "l": "科",
+        "t": "コウウチョウ科（Icteridae）—「モドキ」＝ムクドリに似ているが本物のムクドリではない別科の鳥"
+      },
+      {
+        "l": "原産",
+        "t": "メキシコ・中央アメリカが原産。20世紀後半から急速に北上・拡大してダラス全土に定着"
+      },
+      {
+        "l": "見た目",
+        "t": "オス：全身が虹色光沢の黒・尾が非常に長くV字型・黄色い目。メス：茶色がかった地味な色・オスより小さく尾も短め"
+      },
+      {
+        "l": "鳴き声",
+        "t": "金属音・電子音・ギーギー音など多彩な声。夕方に何百羽・何千羽と街路樹に集まって大合唱する光景はダラスの風物詩"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Family",
+        "t": "Icteridae — 'Modoki' (mock) in the Japanese name means it resembles a starling but belongs to a completely different family."
+      },
+      {
+        "l": "Origin",
+        "t": "Native to Mexico and Central America. Expanded dramatically northward in the late 20th century, now firmly established throughout Dallas."
+      },
+      {
+        "l": "Appearance",
+        "t": "Male: entire body iridescent black, extremely long V-shaped tail, yellow eyes. Female: brownish, much duller, smaller with a shorter tail."
+      },
+      {
+        "l": "Call",
+        "t": "A wild mix of metallic clangs, electronic beeps, and harsh screeches. Every evening, hundreds to thousands gather in street trees for a deafening chorus — a true Dallas spectacle."
+      }
+    ],
+    "highlightJa": "Common Starling（ホシムクドリ）はヨーロッパ原産の外来種、Great-tailed Grackleはアメリカ原産の在来種。全く出自が違うのに同じ場所でうまく共存している",
+    "highlightEn": "The Common Starling is a European invasive; the Great-tailed Grackle is a native American species. Two birds from completely different origins, coexisting in perfect harmony on the same Dallas street corner.",
+    "tags": [
+      "在来種",
+      "アメリカ南部"
+    ],
+    "locationDisplay": "ダウンタウン・公園・至る所",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "Northern Mockingbird",
+    "jp": "マネシツグミ（真似鶫）",
+    "sci": "Mimus polyglottos",
+    "category": "bird",
+    "order": 24,
+    "rowsJa": [
+      {
+        "l": "テキサス州鳥",
+        "t": "テキサス州の公式州鳥！さらにアーカンソー・フロリダ・ミシシッピ・テネシーの計5州で州鳥に指定されているアメリカ南部を代表する鳥"
+      },
+      {
+        "l": "最大の特徴",
+        "t": "200種類以上の他の鳥の鳴き声を真似できる！しかも鳥の声だけでなく、カエルの声・犬の鳴き声・車のアラーム音・ドアのきしむ音まで真似することがある"
+      },
+      {
+        "l": "見た目",
+        "t": "全体的に灰色がかった色。飛ぶと目立つ白いパッチ（翼斑）。スリムで尾が長め。体長約25cm"
+      },
+      {
+        "l": "文化的な縁",
+        "t": "「アラバマ物語（To Kill a Mockingbird）」のタイトルに。「モッキングバードを殺してはいけない、彼らは人間に害を与えず、ただ歌うだけだから」という有名な言葉"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Texas State Bird",
+        "t": "The official state bird of Texas! Also the state bird of Arkansas, Florida, Mississippi, and Tennessee — the quintessential bird of the American South."
+      },
+      {
+        "l": "Superpower",
+        "t": "Can mimic over 200 different bird species! Not just birds — it also imitates frogs, dogs barking, car alarms, and creaking doors."
+      },
+      {
+        "l": "Appearance",
+        "t": "Overall gray coloring. Distinctive white wing patches that flash in flight. Slender with a longish tail. About 10 inches long."
+      },
+      {
+        "l": "Cultural Connection",
+        "t": "The title bird of 'To Kill a Mockingbird.' 'It's a sin to kill a mockingbird — they don't do anything but make music for us to enjoy.'"
+      }
+    ],
+    "highlightJa": "「複数の鳥がいる？」と思ったら1羽のマネシツグミかもしれない！同じ鳥が次々と違う鳴き声を出すので混乱させられる",
+    "highlightEn": "Think you're hearing multiple birds? It might be just one Mockingbird! The same bird cycling through dozens of different songs in rapid succession is endlessly confusing — and endlessly impressive.",
+    "tags": [
+      "テキサス州鳥"
+    ],
+    "locationDisplay": "ダウンタウン・公園",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "American Robin",
+    "jp": "コマツグミ（小駒鶫）",
+    "sci": "Turdus migratorius",
+    "category": "bird",
+    "order": 25,
+    "rowsJa": [
+      {
+        "l": "科",
+        "t": "ツグミ科—日本のツグミやシロハラに近い仲間。ヨーロッパのロビンとは実は別科（外見が似ているためロビンと名付けられた）"
+      },
+      {
+        "l": "見た目",
+        "t": "オレンジ色のお腹が最大の特徴でとても目立つ。背中・頭は濃いグレー〜黒。黄色いくちばし。丸みのあるふっくらした体型。体長約25cm"
+      },
+      {
+        "l": "アメリカでの存在感",
+        "t": "春の訪れを告げる鳥として非常に有名。芝生でミミズを探してちょこちょこ歩く姿が典型的。アメリカ人なら誰でも知っている身近な鳥"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Family",
+        "t": "Turdidae (thrush family) — a close relative of Japan's Tsugumi thrush. Despite the name, it's not closely related to the European Robin (named for superficial resemblance only)."
+      },
+      {
+        "l": "Appearance",
+        "t": "The vivid orange-red breast is unmistakable from a distance. Dark gray to black back and head. Yellow bill. Plump, rounded body shape. About 10 inches long."
+      },
+      {
+        "l": "Status in America",
+        "t": "A beloved herald of spring. Famous for hopping across lawns searching for earthworms. Every American recognizes this bird immediately."
+      }
+    ],
+    "highlightJa": "あのオレンジのお腹は遠くからでもすぐわかる。公園や住宅地の芝生でよく見かける。「春が来た」と感じさせてくれる鳥",
+    "highlightEn": "That orange breast is visible from surprisingly far away. A common sight in parks and suburban lawns. The bird that announces 'spring has arrived.'",
+    "tags": [],
+    "locationDisplay": "公園・住宅地の芝生",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  },
+  {
+    "en": "White-winged Dove",
+    "jp": "シロハラバト（白腹鳩）",
+    "sci": "Zenaida asiatica",
+    "category": "bird",
+    "order": 26,
+    "rowsJa": [
+      {
+        "l": "科",
+        "t": "ハト科"
+      },
+      {
+        "l": "原産",
+        "t": "メキシコ・中米〜アメリカ南西部が原産。過去数十年で急速に北上・都市化が進みダラスでも一般的になった"
+      },
+      {
+        "l": "見た目",
+        "t": "翼の縁に沿って走る白いストライプ（飛ぶと目立つ）が名前の由来。全体は茶色がかったグレー。目の周りの青いアイリングが美しい。オレンジ色の目。体長約28〜30cm"
+      },
+      {
+        "l": "鳴き声",
+        "t": "「フー・クー・クー・クー」という独特の鳴き声。英語では\"Who cooks for you?\"と聞こえると言われる"
+      },
+      {
+        "l": "生態系での役割",
+        "t": "サボテンのSaguaro（サワロサボテン）の受粉に重要な役割。花の蜜を求めて花に入り花粉を運ぶ"
+      }
+    ],
+    "rowsEn": [
+      {
+        "l": "Family",
+        "t": "Columbidae (pigeon and dove family)"
+      },
+      {
+        "l": "Origin",
+        "t": "Native to Mexico, Central America, and the American Southwest. Has expanded rapidly northward and into urban areas in recent decades — now common in Dallas."
+      },
+      {
+        "l": "Appearance",
+        "t": "The white stripe along the wing edge (very visible in flight) gives the bird its name. Overall brownish-gray. Beautiful blue eye ring. Orange-red eyes. About 11–12 inches long."
+      },
+      {
+        "l": "Call",
+        "t": "A distinctive 'hoo-HOO-hoo-hoo' call — English speakers often hear 'Who cooks for you?'"
+      },
+      {
+        "l": "Ecological Role",
+        "t": "Plays a key role in pollinating Saguaro cacti, entering the flowers to drink nectar and carrying pollen in the process."
+      }
+    ],
+    "highlightJa": "白い翼のストライプは飛んでいる時が一番目立つ。一度見たら忘れられない特徴的な模様",
+    "highlightEn": "That white wing stripe is most dramatic in flight — once you see it, you'll never mistake this dove for any other species.",
+    "tags": [],
+    "locationDisplay": "ダウンタウン・公園",
+    "locationArea": "ダラス",
+    "locationState": "Texas",
+    "locationCountry": "USA",
+    "date": "",
+    "photos": []
+  }
+];
+window.doSeed = async function() {
+  const btn = document.getElementById('btn');
+  const status = document.getElementById('status');
+  btn.disabled = true;
+  btn.textContent = '書き込み中…';
+  status.textContent = '';
+  try {
+    const obj = {};
+    ENTRIES.forEach((e, i) => {
+      obj['e' + String(i).padStart(2,'0')] = e;
+    });
+    await set(ref(db, 'entries'), obj);
+    status.innerHTML = '<span class="ok">✓ 完了しました！27件のデータを書き込みました。<br>このページは閉じて大丈夫です。</span>';
+    btn.textContent = '完了！';
+  } catch(err) {
+    status.innerHTML = '<span class="err">エラー: ' + err.message + '</span>';
+    btn.disabled = false;
+    btn.textContent = 'データを書き込む（27件）';
+  }
+};
+</script>
+</body>
+</html>
