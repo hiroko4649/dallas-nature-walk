@@ -256,7 +256,7 @@
     <button class="add-btn claude-btn" onclick="openClaude()" id="btn-claude" style="display:none">🤖 Claudeから追加</button>
     <button onclick="window.requestAuth(()=>{})" id="login-btn" title="編集ログイン" style="background:none;border:1.5px solid #ddd;color:#bbb;font-size:.78rem;cursor:pointer;border-radius:6px;padding:.32rem .6rem;transition:all .2s">🔐</button>
     <button onclick="window.doSignOut()" id="logout-btn" title="ログアウト" style="display:none;background:none;border:1.5px solid #f8a;color:#c44;font-size:.78rem;cursor:pointer;border-radius:6px;padding:.32rem .6rem">🔓 ログアウト</button>
-    <a href="tools_claude.html" target="_blank" style="background:none;border:1.5px solid #c8a8f8;color:#7c3aed;font-size:.78rem;text-decoration:none;border-radius:6px;padding:.32rem .65rem;white-space:nowrap;font-family:inherit;font-weight:700">📝 Claude依頼文</a>
+    <a href="tools_claude.html" target="_blank" id="btn-tool-claude" style="display:none;background:none;border:1.5px solid #c8a8f8;color:#7c3aed;font-size:.78rem;text-decoration:none;border-radius:6px;padding:.32rem .65rem;white-space:nowrap;font-family:inherit;font-weight:700">📝 Claude依頼文</a>
   </div>
 </div>
 
@@ -381,7 +381,7 @@ const auth = getAuth(app);
 let isAuthed = false;
 
 function showEditControls(show){
-  ['btn-add-f','btn-add-b','btn-claude'].forEach(id=>{
+  ['btn-add-f','btn-add-b','btn-claude','btn-tool-claude'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.style.display = show ? '' : 'none';
   });
