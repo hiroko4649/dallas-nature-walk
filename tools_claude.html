@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude依頼文ジェネレーター</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Lora:ital,wght@0,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gd:#1e3a2f; --gm:#2d6a4f; --gl:#74c69d; --gp:#d8f3dc;
+      --cream:#fefdf8; --warm:#f8f3e8; --text:#1a1a1a; --mid:#4a4a4a; --lt:#7a7a7a; --bdr:#e0d8cc;
+    }
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Noto Sans JP',sans-serif; background:var(--cream); color:var(--text); min-height:100vh; }
+
+    header { background:linear-gradient(135deg,var(--gd) 0%,#2d5016 60%,#1a3a20 100%); padding:1.4rem 1.5rem; }
+    header h1 { font-family:'Lora',serif; font-size:1.2rem; color:#fff; font-weight:600; }
+    header p  { font-size:.75rem; color:var(--gl); margin-top:.2rem; letter-spacing:.06em; }
+    .back-link { display:inline-block; color:rgba(255,255,255,.7); font-size:.78rem; text-decoration:none; margin-bottom:.6rem; }
+    .back-link:hover { color:#fff; }
+
+    .container { max-width:640px; margin:2rem auto; padding:0 1.2rem 3rem; }
+
+    .card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.07); padding:1.6rem; margin-bottom:1.2rem; }
+    .card h2 { font-size:1rem; font-weight:700; color:var(--gd); margin-bottom:1.1rem; display:flex; align-items:center; gap:.5rem; }
+
+    .form-group { margin-bottom:.9rem; }
+    .form-group label { display:block; font-size:.75rem; font-weight:700; color:var(--lt); margin-bottom:.28rem; text-transform:uppercase; letter-spacing:.04em; }
+    .form-group input, .form-group select, .form-group textarea {
+      width:100%; padding:.52rem .75rem; border:1.5px solid var(--bdr); border-radius:8px;
+      font-family:inherit; font-size:.9rem; color:var(--text); outline:none; transition:border-color .18s; background:#fff;
+    }
+    .form-group input:focus, .form-group select:focus { border-color:var(--gm); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
+
+    .btn-generate {
+      width:100%; background:var(--gm); color:#fff; border:none; border-radius:10px;
+      padding:.75rem; font-family:inherit; font-size:1rem; font-weight:700; cursor:pointer;
+      transition:background .18s; margin-top:.3rem;
+    }
+    .btn-generate:hover { background:var(--gl); }
+    .btn-generate:active { transform:scale(.98); }
+
+    .result-area { display:none; }
+    .result-area.show { display:block; }
+
+    .result-box {
+      background:#1e2a1e; color:#d4edda; border-radius:10px; padding:1.2rem 1.3rem;
+      font-family:monospace; font-size:.82rem; line-height:1.8; white-space:pre-wrap;
+      word-break:break-word; margin-bottom:.8rem; max-height:400px; overflow-y:auto;
+    }
+
+    .btn-copy {
+      width:100%; background:var(--gd); color:#fff; border:none; border-radius:10px;
+      padding:.7rem; font-family:inherit; font-size:.95rem; font-weight:700; cursor:pointer;
+      transition:background .18s; display:flex; align-items:center; justify-content:center; gap:.5rem;
+    }
+    .btn-copy:hover { background:var(--gm); }
+    .btn-copy.copied { background:#1a7a3a; }
+
+    .hint { font-size:.78rem; color:var(--lt); line-height:1.7; padding:.7rem .9rem; background:var(--warm); border-radius:8px; margin-top:.8rem; }
+    .hint strong { color:var(--gd); }
+
+    .step { display:flex; gap:.7rem; align-items:flex-start; margin-bottom:.7rem; }
+    .step-num { background:var(--gm); color:#fff; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; flex-shrink:0; margin-top:.1rem; }
+    .step p { font-size:.83rem; color:var(--mid); line-height:1.6; }
+
+    @media(max-width:480px) { .form-row { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="index.html">← データベースに戻る</a>
+  <h1>📝 Claude依頼文ジェネレーター</h1>
+  <p>散歩で見かけた花・鳥のJSON作成依頼文を自動生成</p>
+</header>
+
+<div class="container">
+
+  <!-- 使い方 -->
+  <div class="card">
+    <h2>📖 使い方</h2>
+    <div class="step"><div class="step-num">1</div><p>下のフォームに情報を入力する</p></div>
+    <div class="step"><div class="step-num">2</div><p>「依頼文を生成」ボタンを押す</p></div>
+    <div class="step"><div class="step-num">3</div><p>「コピー」ボタンを押してClaudeのチャットに貼り付ける</p></div>
+    <div class="step"><div class="step-num">4</div><p>ClaudeがJSONを作成するので、それをデータベースの「🤖 Claudeから追加」に貼り付ける</p></div>
+  </div>
+
+  <!-- フォーム -->
+  <div class="card">
+    <h2>✏️ 情報を入力</h2>
+
+    <div class="form-group">
+      <label>花・鳥の名前（英語または日本語）*</label>
+      <input type="text" id="inp-name" placeholder="例：Walker's Low Catmint　/ ナデシコ">
+    </div>
+
+    <div class="form-group">
+      <label>カテゴリ *</label>
+      <select id="inp-category">
+        <option value="flower">🌸 花・植物</option>
+        <option value="bird">🐦 鳥</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Google Drive 画像URL</label>
+      <input type="url" id="inp-photo" placeholder="https://drive.google.com/file/d/...">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>見かけた場所（表示名）</label>
+        <input type="text" id="inp-location" placeholder="例：Harwood Park">
+      </div>
+      <div class="form-group">
+        <label>大まかな場所（フィルター用）</label>
+        <input type="text" id="inp-area" placeholder="例：ダラス" value="ダラス">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>州</label>
+        <input type="text" id="inp-state" placeholder="例：Texas" value="Texas">
+      </div>
+      <div class="form-group">
+        <label>国</label>
+        <input type="text" id="inp-country" placeholder="例：USA" value="USA">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>見かけた日</label>
+      <input type="date" id="inp-date">
+    </div>
+
+    <div class="form-group">
+      <label>メモ（任意）</label>
+      <input type="text" id="inp-memo" placeholder="例：公園の入口付近に群生していた">
+    </div>
+
+    <button class="btn-generate" onclick="generate()">✨ 依頼文を生成</button>
+  </div>
+
+  <!-- 生成結果 -->
+  <div class="card result-area" id="result-area">
+    <h2>📋 生成された依頼文</h2>
+    <div class="result-box" id="result-box"></div>
+    <button class="btn-copy" id="btn-copy" onclick="copyText()">
+      <span id="copy-icon">📋</span>
+      <span id="copy-label">Claudeのチャットにコピー</span>
+    </button>
+    <div class="hint">
+      <strong>次のステップ：</strong><br>
+      このテキストをコピーして、Claudeとのチャットに貼り付けてください。ClaudeがJSON形式でデータをまとめてくれます。それをデータベースの「🤖 Claudeから追加」ボタンから追加してください。
+    </div>
+  </div>
+
+</div>
+
+<script>
+function generate() {
+  const name     = document.getElementById('inp-name').value.trim();
+  const category = document.getElementById('inp-category').value;
+  const photo    = document.getElementById('inp-photo').value.trim();
+  const location = document.getElementById('inp-location').value.trim();
+  const area     = document.getElementById('inp-area').value.trim();
+  const state    = document.getElementById('inp-state').value.trim();
+  const country  = document.getElementById('inp-country').value.trim();
+  const date     = document.getElementById('inp-date').value;
+  const memo     = document.getElementById('inp-memo').value.trim();
+
+  if (!name) { alert('花・鳥の名前を入力してください'); return; }
+
+  const catLabel = category === 'flower' ? '花・植物' : '鳥';
+  const dateLabel = date || '未入力';
+  const photoLine = photo ? `画像URL：${photo}` : '画像URL：なし';
+  const locationLine = location ? `見かけた場所：${location}` : '';
+  const areaLine = area ? `大まかな場所：${area}` : '';
+  const stateLine = state ? `州：${state}` : '';
+  const countryLine = country ? `国：${country}` : '';
+  const dateLine = date ? `見かけた日：${date}` : '';
+  const memoLine = memo ? `メモ：${memo}` : '';
+
+  const infoLines = [photoLine, locationLine, areaLine, stateLine, countryLine, dateLine, memoLine]
+    .filter(Boolean).join('\n');
+
+  const text =
+`「散歩日記 花と鳥のデータベース」に追加するためのJSONを作成してください。
+
+【名前】${name}
+【カテゴリ】${catLabel}
+${infoLines}
+
+以下の形式のJSONを作成してください。今まで入れてきたエントリーと同じように、日本語と英語の両方で詳細情報・豆知識・ハイライトを書いてください。
+
+{
+  "en": "英語名",
+  "jp": "日本語名",
+  "sci": "学名",
+  "category": "${category}",
+  "rowsJa": [{"l": "ラベル", "t": "テキスト"}, ...],
+  "rowsEn": [{"l": "Label", "t": "Text"}, ...],
+  "highlightJa": "ハイライト（日本語）",
+  "highlightEn": "Highlight (English)",
+  "tags": [],
+  "locationDisplay": "${location}",
+  "locationArea": "${area}",
+  "locationState": "${state}",
+  "locationCountry": "${country}",
+  "date": "${dateLabel}",
+  "photos": [${photo ? `"${photo}"` : ''}],
+  "memo": "${memo}"
+}`;
+
+  document.getElementById('result-box').textContent = text;
+  const ra = document.getElementById('result-area');
+  ra.classList.add('show');
+  ra.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // reset copy button
+  document.getElementById('copy-label').textContent = 'Claudeのチャットにコピー';
+  document.getElementById('copy-icon').textContent = '📋';
+  document.getElementById('btn-copy').classList.remove('copied');
+}
+
+function copyText() {
+  const text = document.getElementById('result-box').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    document.getElementById('copy-label').textContent = 'コピーしました！';
+    document.getElementById('copy-icon').textContent = '✓';
+    document.getElementById('btn-copy').classList.add('copied');
+    setTimeout(() => {
+      document.getElementById('copy-label').textContent = 'Claudeのチャットにコピー';
+      document.getElementById('copy-icon').textContent = '📋';
+      document.getElementById('btn-copy').classList.remove('copied');
+    }, 2500);
+  });
+}
+
+// 今日の日付をデフォルトにセット
+document.getElementById('inp-date').valueAsDate = new Date();
+</script>
+</body>
+</html>

@@ -255,6 +255,8 @@
     <button class="add-btn add-b" onclick="openAdd('bird')"   id="btn-add-b" style="display:none">＋ 鳥を追加</button>
     <button class="add-btn claude-btn" onclick="openClaude()" id="btn-claude" style="display:none">🤖 Claudeから追加</button>
     <button onclick="window.requestAuth(()=>{})" id="login-btn" title="編集ログイン" style="background:none;border:1.5px solid #ddd;color:#bbb;font-size:.78rem;cursor:pointer;border-radius:6px;padding:.32rem .6rem;transition:all .2s">🔐</button>
+    <button onclick="window.doSignOut()" id="logout-btn" title="ログアウト" style="display:none;background:none;border:1.5px solid #f8a;color:#c44;font-size:.78rem;cursor:pointer;border-radius:6px;padding:.32rem .6rem">🔓 ログアウト</button>
+    <a href="tools_claude.html" target="_blank" style="background:none;border:1.5px solid #c8a8f8;color:#7c3aed;font-size:.78rem;text-decoration:none;border-radius:6px;padding:.32rem .65rem;white-space:nowrap;font-family:inherit;font-weight:700">📝 Claude依頼文</a>
   </div>
 </div>
 
@@ -349,7 +351,8 @@
 <div class="pw-modal-bg" id="pw-modal-bg">
   <div class="pw-box">
     <h3>🔐 編集モード</h3>
-    <p>データの追加・編集・削除にはパスワードが必要です</p>
+    <p>データの追加・編集・削除にはログインが必要です</p>
+    <input class="pw-inp" id="pw-email" type="email" placeholder="メールアドレス" style="margin-bottom:.5rem" onkeydown="if(event.key==='Enter')document.getElementById('pw-inp').focus()">
     <input class="pw-inp" id="pw-inp" type="password" placeholder="パスワード" onkeydown="if(event.key==='Enter')checkPw()">
     <button class="pw-btn" onclick="checkPw()">ログイン</button>
     <div class="pw-err" id="pw-err"></div>
@@ -359,6 +362,7 @@
 <script type="module">
 import { initializeApp }  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import { getDatabase,ref,push,onValue,remove,update } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+import { getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
 const app = initializeApp({
   apiKey:"AIzaSyBL-1bIyHXWrkY1-YMfhffVTm_u6dmOHOI",
@@ -373,21 +377,26 @@ const app = initializeApp({
 const db = getDatabase(app);
 
 /* ── AUTH ── */
-const PW_HASH = '6a1e03e7d5b2a06e1f8e6c6e0f2c3b9a7d4e5f8c2b1a0d9e7f6c5b4a3d2e1f0'; // lucky1214
-async function hashPw(pw){
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-let isAuthed = sessionStorage.getItem('nw_auth')==='1';
+const auth = getAuth(app);
+let isAuthed = false;
 
 function showEditControls(show){
-  // Add buttons
   ['btn-add-f','btn-add-b','btn-claude'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.style.display = show ? '' : 'none';
   });
-  // Edit/delete buttons in cards (re-rendered each time, handled in makeCard)
 }
+
+// Watch auth state
+onAuthStateChanged(auth, user => {
+  isAuthed = !!user;
+  showEditControls(isAuthed);
+  const lb=document.getElementById('login-btn');
+  const lo=document.getElementById('logout-btn');
+  if(lb) lb.style.display = isAuthed ? 'none' : '';
+  if(lo) lo.style.display = isAuthed ? '' : 'none';
+  render();
+});
 
 window.requestAuth = function(cb){
   if(isAuthed){ cb(); return; }
@@ -399,24 +408,26 @@ window.requestAuth = function(cb){
 };
 
 window.checkPw = async function(){
-  const val = document.getElementById('pw-inp').value;
-  const hash = await hashPw(val);
-  // hardcoded hash of lucky1214
-  const correct = await hashPw('lucky1214');
-  if(hash === correct){
-    isAuthed = true;
-    sessionStorage.setItem('nw_auth','1');
+  const email = document.getElementById('pw-email').value.trim();
+  const pass  = document.getElementById('pw-inp').value;
+  const errEl = document.getElementById('pw-err');
+  errEl.textContent = '';
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
     document.getElementById('pw-modal-bg').classList.remove('open');
-    showEditControls(true);
-    const lb=document.getElementById('login-btn'); if(lb)lb.style.display='none';
-    render(); // re-render cards to show edit buttons
     if(window._authCb){ window._authCb(); window._authCb=null; }
-  } else {
+  } catch(e) {
     const inp = document.getElementById('pw-inp');
     inp.classList.add('error');
-    document.getElementById('pw-err').textContent = 'パスワードが違います';
+    errEl.textContent = 'メールアドレスまたはパスワードが違います';
     setTimeout(()=>inp.classList.remove('error'),400);
   }
+};
+
+window.doSignOut = async function(){
+  await signOut(auth);
+  render();
+  toast('ログアウトしました');
 };
 
 /* ── UI STRINGS ── */
@@ -503,12 +514,6 @@ function tagClass(t){
   if(/食用|edible/i.test(t))return 't-edible';
   if(/メキシコ|熱帯|origin|tropical/i.test(t))return 't-origin';
   return 't-default';
-}
-
-/* ── INIT AUTH ── */
-if(isAuthed){
-  showEditControls(true);
-  const lb=document.getElementById('login-btn'); if(lb)lb.style.display='none';
 }
 
 /* ── FIREBASE ── */
