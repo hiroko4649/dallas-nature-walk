@@ -10,6 +10,8 @@
     :root {
       --gd:#1e3a2f; --gm:#2d6a4f; --gl:#74c69d; --gp:#d8f3dc;
       --bd:#1a3a5c; --bm:#2563a0; --bl:#90c8e8; --bp:#dbeafe;
+      --fd:#c45000; --fp:#fff3e0; --fl:#ffb74d;
+      --ot:#546e7a; --op:#eceff1; --ol:#b0bec5;
       --cream:#fefdf8; --warm:#f8f3e8; --text:#1a1a1a; --mid:#4a4a4a; --lt:#7a7a7a; --bdr:#e0d8cc;
     }
     *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
@@ -62,13 +64,19 @@
     .section-head { display:flex; align-items:center; gap:12px; margin:32px 0 18px; padding-bottom:10px; border-bottom:3px solid; }
     .section-head.fl { border-color:var(--gm); }
     .section-head.bi { border-color:var(--bm); }
+    .section-head.fd { border-color:var(--fd); }
+    .section-head.ot { border-color:var(--ot); }
     .section-head .icon { font-size:28px; }
     .section-head h2 { font-size:1.2rem; font-weight:700; }
     .section-head.fl h2 { color:var(--gd); }
     .section-head.bi h2 { color:var(--bd); }
+    .section-head.fd h2 { color:var(--fd); }
+    .section-head.ot h2 { color:var(--ot); }
     .section-head .cnt { margin-left:auto; font-size:.82rem; font-weight:700; padding:4px 14px; border-radius:14px; }
     .section-head.fl .cnt { background:var(--gp); color:var(--gd); }
     .section-head.bi .cnt { background:var(--bp); color:var(--bd); }
+    .section-head.fd .cnt { background:var(--fp); color:var(--fd); }
+    .section-head.ot .cnt { background:var(--op); color:var(--ot); }
     .cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; }
     .no-results { text-align:center; padding:3rem; color:var(--lt); font-style:italic; grid-column:1/-1; }
 
@@ -77,11 +85,15 @@
     .card:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,0,0,.1); }
     .card.flower { border-top-color:var(--gm); }
     .card.bird   { border-top-color:var(--bm); }
+    .card.food   { border-top-color:var(--fd); }
+    .card.other  { border-top-color:var(--ot); }
 
     /* PHOTO */
     .photo-wrap { position:relative; width:100%; height:195px; overflow:hidden; }
     .card.flower .photo-wrap { background:var(--gp); }
     .card.bird   .photo-wrap { background:var(--bp); }
+    .card.food   .photo-wrap { background:var(--fp); }
+    .card.other  .photo-wrap { background:var(--op); }
     .photo-wrap img { width:100%; height:100%; object-fit:cover; transition:transform .4s; }
     .card:hover .photo-wrap img { transform:scale(1.04); }
     .photo-placeholder { width:100%; height:195px; display:flex; align-items:center; justify-content:center; font-size:4rem; }
@@ -105,10 +117,14 @@
     .info-lbl { flex-shrink:0; font-weight:700; font-size:10.5px; letter-spacing:.4px; padding:2px 7px; border-radius:4px; margin-top:1px; white-space:nowrap; }
     .card.flower .info-lbl { background:var(--gp); color:var(--gd); }
     .card.bird   .info-lbl { background:var(--bp); color:var(--bd); }
+    .card.food   .info-lbl { background:var(--fp); color:var(--fd); }
+    .card.other  .info-lbl { background:var(--op); color:var(--ot); }
     .info-txt { color:var(--mid); line-height:1.6; }
     .card-hl { margin-top:10px; padding:9px 12px; border-radius:8px; font-size:12px; line-height:1.6; }
     .card.flower .card-hl { background:var(--gp); color:var(--gd); }
     .card.bird   .card-hl { background:var(--bp); color:var(--bd); }
+    .card.food   .card-hl { background:var(--fp); color:var(--fd); }
+    .card.other  .card-hl { background:var(--op); color:var(--ot); }
     .tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:9px; }
     .tag  { font-size:10px; font-weight:700; padding:2px 9px; border-radius:12px; letter-spacing:.4px; }
     .t-texas   { background:#d4edda; color:#155724; }
@@ -136,6 +152,8 @@
     @keyframes mIn { from{opacity:0;transform:scale(.95) translateY(8px);} to{opacity:1;transform:scale(1) translateY(0);} }
     .modal h2 { font-family:'Lora',serif; font-size:1.1rem; margin-bottom:1rem; color:var(--gm); }
     .modal.bm h2 { color:var(--bm); }
+    .modal.fm h2 { color:var(--fd); }
+    .modal.om h2 { color:var(--ot); }
     .fsec { font-size:.68rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--lt); margin:1rem 0 .45rem; padding-bottom:.2rem; border-bottom:1px solid var(--bdr); }
     .fr2  { display:grid; grid-template-columns:1fr 1fr; gap:.65rem; }
     .fg   { margin-bottom:.55rem; }
@@ -210,13 +228,14 @@
 <header>
   <div class="h-inner">
     <div class="h-text">
-      <h1 id="h-title">散歩日記 — 花と鳥のデータベース</h1>
-      <p class="h-title-en" id="h-title-en">Walking Diary — Flowers &amp; Birds Database</p>
-      <p id="h-sub">FLOWERS, PLANTS &amp; BIRDS ENCOUNTERED ON WALKS IN DALLAS</p>
+      <h1 id="h-title">ダラス散歩日記データベース：花と鳥とおいしいもの</h1>
+      <p class="h-title-en" id="h-title-en">Walking Diary Database — Flowers, Birds &amp; More</p>
+      <p id="h-sub">VLOG作成中に得た情報の記録 · A RECORD FROM DALLAS WALK VLOGS</p>
       <div class="h-stats">
         <div class="stat"><div class="stat-n" id="st-f">—</div><div class="stat-l" id="st-fl">花・植物</div></div>
         <div class="stat"><div class="stat-n" id="st-b">—</div><div class="stat-l" id="st-bl">鳥</div></div>
-        <div class="stat"><div class="stat-n" id="st-t">—</div><div class="stat-l" id="st-tl">合計</div></div>
+        <div class="stat"><div class="stat-n" id="st-fd">—</div><div class="stat-l" id="st-fdl">おいしいもの</div></div>
+      <div class="stat"><div class="stat-n" id="st-t">—</div><div class="stat-l" id="st-tl">合計</div></div>
       </div>
     </div>
     <button class="lang-btn" id="lang-btn" onclick="toggleLang()">🌐 English</button>
@@ -229,6 +248,8 @@
   <button class="ctrl-btn active" id="cat-all"    onclick="setCat('all')">すべて</button>
   <button class="ctrl-btn"        id="cat-flower" onclick="setCat('flower')">🌸 花・植物</button>
   <button class="ctrl-btn bird-mode" id="cat-bird" onclick="setCat('bird')">🐦 鳥</button>
+  <button class="ctrl-btn" id="cat-food"  onclick="setCat('food')" style="border-color:var(--fd);color:var(--fd)">🍊 おいしいもの</button>
+  <button class="ctrl-btn" id="cat-other" onclick="setCat('other')" style="border-color:var(--ot);color:var(--ot)">📝 その他</button>
   <div class="ctrl-divider"></div>
   <!-- Area filter (dynamic) -->
   <div id="area-filters" style="display:flex;flex-wrap:wrap;gap:.4rem;"></div>
@@ -253,6 +274,8 @@
   <div class="add-btns">
     <button class="add-btn add-f" onclick="openAdd('flower')" id="btn-add-f" style="display:none">＋ 花を追加</button>
     <button class="add-btn add-b" onclick="openAdd('bird')"   id="btn-add-b" style="display:none">＋ 鳥を追加</button>
+    <button class="add-btn" onclick="openAdd('food')"  id="btn-add-fd" style="display:none;background:var(--fd);color:#fff">＋ おいしいもの</button>
+    <button class="add-btn" onclick="openAdd('other')" id="btn-add-ot" style="display:none;background:var(--ot);color:#fff">＋ その他</button>
     <button class="add-btn claude-btn" onclick="openClaude()" id="btn-claude" style="display:none">🤖 Claudeから追加</button>
     <button onclick="window.requestAuth(()=>{})" id="login-btn" title="編集ログイン" style="background:none;border:1.5px solid #ddd;color:#bbb;font-size:.78rem;cursor:pointer;border-radius:6px;padding:.32rem .6rem;transition:all .2s">🔐</button>
     <button onclick="window.doSignOut()" id="logout-btn" title="ログアウト" style="display:none;background:none;border:1.5px solid #f8a;color:#c44;font-size:.78rem;cursor:pointer;border-radius:6px;padding:.32rem .6rem">🔓 ログアウト</button>
@@ -344,7 +367,7 @@
 <div class="toast" id="toast"></div>
 
 <footer>
-  <p id="footer-txt">散歩日記 花と鳥のデータベース — ダラスの散歩で出会った花・植物・鳥の記録</p>
+  <p id="footer-txt">ダラス散歩日記データベース — 花と鳥とおいしいもの · vlog作成中に得た情報の記録</p>
 </footer>
 
 <!-- PASSWORD MODAL -->
@@ -381,7 +404,7 @@ const auth = getAuth(app);
 let isAuthed = false;
 
 function showEditControls(show){
-  ['btn-add-f','btn-add-b','btn-claude','btn-tool-claude'].forEach(id=>{
+  ['btn-add-f','btn-add-b','btn-add-fd','btn-add-ot','btn-claude','btn-tool-claude'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.style.display = show ? '' : 'none';
   });
@@ -433,20 +456,22 @@ window.doSignOut = async function(){
 /* ── UI STRINGS ── */
 const S = {
   ja:{
-    title:"散歩日記 — 花と鳥のデータベース",
-    titleEn:"Walking Diary — Flowers & Birds Database",
-    sub:"ダラスの散歩で出会った花・植物・鳥の記録",
+    title:"ダラス散歩日記データベース：花と鳥とおいしいもの",
+    titleEn:"Walking Diary Database — Flowers, Birds & More",
+    sub:"VLOG作成中に得た情報の記録",
     langBtn:"🌐 English",
-    catAll:"すべて", catF:"🌸 花・植物", catB:"🐦 鳥",
+    catAll:"すべて", catF:"🌸 花・植物", catB:"🐦 鳥", catFd:"🍊 おいしいもの", catOt:"📝 その他",
     sortOrd:"追加順", sortEN:"英語名順", sortJP:"日本語名順", sortDate:"見かけた日順",
     searchPH:"名前・特徴・メモで検索…",
-    addF:"＋ 花を追加", addB:"＋ 鳥を追加", addClaude:"🤖 Claudeから追加",
-    flowerLabel:"花・植物", birdLabel:"鳥", totalLabel:"合計",
+    addF:"＋ 花を追加", addB:"＋ 鳥を追加", addFd:"＋ おいしいものを追加", addOt:"＋ その他を追加", addClaude:"🤖 Claudeから追加",
+    flowerLabel:"花・植物", birdLabel:"鳥", foodLabel:"おいしいもの", totalLabel:"合計",
     areaAll:"すべての場所", monthAll:"すべての時期",
     edit:"✏️ 編集", del:"🗑️",
     save:"保存する", cancel:"キャンセル",
     addFlowerTitle:"🌸 新しい花・植物を追加",
     addBirdTitle:"🐦 新しい鳥を追加",
+    addFoodTitle:"🍊 新しいおいしいものを追加",
+    addOtherTitle:"📝 その他を追加",
     editTitle:"✏️ 編集",
     secBasic:"基本情報", secJa:"日本語 詳細情報", secEn:"English Details",
     secLoc:"記録", secTags:"タグ（Enterで追加）", secPhotos:"写真（Google Drive URL）",
@@ -458,25 +483,27 @@ const S = {
     lblMemo:"メモ（任意）",
     btnAddRowJa:"＋ 情報行を追加（日本語）", btnAddRowEn:"＋ Add info row (English)",
     btnAddPhoto:"＋ 写真URLを追加",
-    footer:"散歩日記 花と鳥のデータベース — ダラスの散歩で出会った花・植物・鳥の記録",
+    footer:"ダラス散歩日記データベース — 花と鳥とおいしいもの · vlog作成中に得た情報の記録",
     noData:"データがありません",
-    flowers:"花・植物", birds:"鳥",
+    flowers:"花・植物", birds:"鳥", food:"おいしいもの", other:"その他",
   },
   en:{
-    title:"Walking Diary — Flowers & Birds Database",
-    titleEn:"散歩日記 — 花と鳥のデータベース",
-    sub:"A record of flowers, plants & birds encountered on walks in Dallas",
+    title:"Walking Diary Database — Flowers, Birds & More",
+    titleEn:"ダラス散歩日記データベース：花と鳥とおいしいもの",
+    sub:"A record of discoveries from Dallas walk vlogs",
     langBtn:"🌐 日本語",
-    catAll:"All", catF:"🌸 Flowers", catB:"🐦 Birds",
+    catAll:"All", catF:"🌸 Flowers", catB:"🐦 Birds", catFd:"🍊 Food & Drinks", catOt:"📝 Other",
     sortOrd:"Original Order", sortEN:"English Name", sortJP:"Japanese Name", sortDate:"Date Spotted",
     searchPH:"Search by name, description or note…",
-    addF:"＋ Add Flower", addB:"＋ Add Bird", addClaude:"🤖 Add from Claude",
-    flowerLabel:"Flowers", birdLabel:"Birds", totalLabel:"Total",
+    addF:"＋ Add Flower", addB:"＋ Add Bird", addFd:"＋ Add Food/Drink", addOt:"＋ Add Other", addClaude:"🤖 Add from Claude",
+    flowerLabel:"Flowers", birdLabel:"Birds", foodLabel:"Food & Drinks", totalLabel:"Total",
     areaAll:"All Locations", monthAll:"All Dates",
     edit:"✏️ Edit", del:"🗑️",
     save:"Save", cancel:"Cancel",
     addFlowerTitle:"🌸 Add New Flower / Plant",
     addBirdTitle:"🐦 Add New Bird",
+    addFoodTitle:"🍊 Add New Food / Drink",
+    addOtherTitle:"📝 Add Other",
     editTitle:"✏️ Edit",
     secBasic:"Basic Info", secJa:"Japanese Details", secEn:"English Details",
     secLoc:"Record", secTags:"Tags (press Enter to add)", secPhotos:"Photos (Google Drive URL)",
@@ -488,9 +515,9 @@ const S = {
     lblMemo:"Memo / Note (optional)",
     btnAddRowJa:"＋ 情報行を追加（日本語）", btnAddRowEn:"＋ Add info row (English)",
     btnAddPhoto:"＋ Add photo URL",
-    footer:"Walking Diary — Flowers & Birds Database · Dallas walks",
+    footer:"Walking Diary Database — Flowers, Birds & More · Dallas walk vlogs",
     noData:"No entries found",
-    flowers:"Flowers & Plants", birds:"Birds",
+    flowers:"Flowers & Plants", birds:"Birds", food:"Food & Drinks", other:"Other",
   }
 };
 
@@ -568,13 +595,18 @@ function render(){
   // split
   const flowers = entries.filter(e=>e.category==='flower');
   const birds   = entries.filter(e=>e.category==='bird');
+  const food    = entries.filter(e=>e.category==='food');
+  const other   = entries.filter(e=>e.category==='other');
 
   // stats
-  const allF = Object.values(allEntries).filter(e=>e.category==='flower').length;
-  const allB = Object.values(allEntries).filter(e=>e.category==='bird').length;
+  const allF  = Object.values(allEntries).filter(e=>e.category==='flower').length;
+  const allB  = Object.values(allEntries).filter(e=>e.category==='bird').length;
+  const allFd = Object.values(allEntries).filter(e=>e.category==='food').length;
+  const allOt = Object.values(allEntries).filter(e=>e.category==='other').length;
   document.getElementById('st-f').textContent=allF;
   document.getElementById('st-b').textContent=allB;
-  document.getElementById('st-t').textContent=allF+allB;
+  document.getElementById('st-fd').textContent=allFd;
+  document.getElementById('st-t').textContent=allF+allB+allFd+allOt;
 
   // area buttons
   const areas=['all',...new Set(Object.values(allEntries).map(e=>e.locationArea).filter(Boolean).sort())];
@@ -610,12 +642,23 @@ function render(){
       html+=`<div class="section-head bi"><span class="icon">🐦</span><h2>${s.birds}</h2><span class="cnt">${birds.length}種</span></div><div class="cards">${birds.map((e,i)=>makeCard(e,i)).join('')}</div>`;
     }
   }
+  if(cat==='all'||cat==='food'){
+    if(food.length){
+      html+=`<div class="section-head fd"><span class="icon">🍊</span><h2>${s.food}</h2><span class="cnt">${food.length}件</span></div><div class="cards">${food.map((e,i)=>makeCard(e,i)).join('')}</div>`;
+    }
+  }
+  if(cat==='all'||cat==='other'){
+    if(other.length){
+      html+=`<div class="section-head ot"><span class="icon">📝</span><h2>${s.other}</h2><span class="cnt">${other.length}件</span></div><div class="cards">${other.map((e,i)=>makeCard(e,i)).join('')}</div>`;
+    }
+  }
   ca.innerHTML=html;
 }
 
 function makeCard(e,i){
   const isF = e.category==='flower';
-  const em  = isF?'🌸':'🐦';
+  const emMap = {flower:'🌸', bird:'🐦', food:'🍊', other:'📝'};
+  const em  = emMap[e.category]||'📝';
   const rows = toArr(lang==='ja'?e.rowsJa:e.rowsEn);
   const hl   = lang==='ja'?e.highlightJa:e.highlightEn;
   const photos= toArr(e.photos).filter(Boolean);
@@ -627,7 +670,7 @@ function makeCard(e,i){
 
   const photosJSON = JSON.stringify(photos).replace(/"/g,'&quot;');
   return `
-<div class="card ${isF?'flower':'bird'}" id="card-${e._id}" style="animation:mIn .3s ${delay}s ease both">
+<div class="card ${e.category||'flower'}" id="card-${e._id}" style="animation:mIn .3s ${delay}s ease both">
   <div class="photo-wrap" id="pw-${e._id}">
     ${img
       ?`<img src="${img}" alt="${e.jp||''}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
@@ -676,7 +719,7 @@ window.pNav=function(id,dir,total,photosStr){
 };
 
 /* ── FILTER / SORT / SEARCH ── */
-window.setCat=function(c){ cat=c; ['all','flower','bird'].forEach(x=>{const el=document.getElementById('cat-'+x);if(el){el.classList.toggle('active',x===c);}}); render(); };
+window.setCat=function(c){ cat=c; ['all','flower','bird','food','other'].forEach(x=>{const el=document.getElementById('cat-'+x);if(el){el.classList.toggle('active',x===c);}}); render(); };
 window.setArea=function(a){ area=a; render(); };
 window.setMonth=function(v){ monthFilter=v; render(); };
 window.setSort=function(v){ sortBy=v; render(); };
@@ -698,8 +741,11 @@ function updateUI(s){
   document.getElementById('cat-all').textContent=s.catAll;
   document.getElementById('cat-flower').textContent=s.catF;
   document.getElementById('cat-bird').textContent=s.catB;
+  document.getElementById('cat-food').textContent=s.catFd;
+  document.getElementById('cat-other').textContent=s.catOt;
   document.getElementById('st-fl').textContent=s.flowerLabel;
   document.getElementById('st-bl').textContent=s.birdLabel;
+  document.getElementById('st-fdl').textContent=s.foodLabel;
   document.getElementById('st-tl').textContent=s.totalLabel;
   document.getElementById('btn-add-f').textContent=s.addF;
   document.getElementById('btn-add-b').textContent=s.addB;
@@ -752,10 +798,14 @@ window.closeModal=function(w){
 window.bgClick=function(e,id){ if(e.target===document.getElementById(id)) document.getElementById(id).classList.remove('open'); };
 
 function syncModalLang(c){
-  const s=S[lang], isF=c==='flower';
+  const s=S[lang];
   const m=document.getElementById('entry-modal');
-  m.classList.toggle('bm',!isF);
-  document.getElementById('em-title').textContent = editId ? s.editTitle : (isF?s.addFlowerTitle:s.addBirdTitle);
+  m.classList.remove('bm','fm','om');
+  if(c==='bird')  m.classList.add('bm');
+  if(c==='food')  m.classList.add('fm');
+  if(c==='other') m.classList.add('om');
+  const titleMap = {flower:s.addFlowerTitle, bird:s.addBirdTitle, food:s.addFoodTitle, other:s.addOtherTitle};
+  document.getElementById('em-title').textContent = editId ? s.editTitle : (titleMap[c]||s.addFlowerTitle);
   document.getElementById('fsec-basic').textContent=s.secBasic;
   document.getElementById('fsec-ja').textContent=s.secJa;
   document.getElementById('fsec-en').textContent=s.secEn;
