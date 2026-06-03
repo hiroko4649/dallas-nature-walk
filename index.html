@@ -967,7 +967,7 @@ window.importClaude=function(){
 /* ── CONFIRM ── */
 function showCfm(title,msg,cb){ confirmCb=cb; document.getElementById('cfm-title').textContent=title; document.getElementById('cfm-msg').textContent=msg; document.getElementById('cfm-bg').classList.add('open'); }
 window.closeCfm=function(){ document.getElementById('cfm-bg').classList.remove('open'); confirmCb=null; };
-document.getElementById('cfm-yes').addEventListener('click',()=>{ closeCfm(); if(confirmCb)confirmCb(); });
+document.getElementById('cfm-yes').addEventListener('click',()=>{ const cb=confirmCb; closeCfm(); if(cb)cb(); });
 
 /* ── TOAST ── */
 function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2800); }
