@@ -907,7 +907,19 @@ window.askDel=function(id,name){
   requestAuth(()=>{
   showCfm(lang==='ja'?`「${name}」を削除しますか？`:`Delete "${name}"?`,
           lang==='ja'?'この操作は元に戻せません。':'This cannot be undone.',
-          ()=>remove(ref(db,'entries/'+id)).then(()=>toast(lang==='ja'?'削除しました':'Deleted')));
+          ()=>{
+            console.log('削除実行 id:', id);
+            console.log('auth user:', getAuth(app).currentUser?.uid);
+            remove(ref(db,'entries/'+id))
+              .then(()=>{
+                console.log('削除成功');
+                toast(lang==='ja'?'削除しました':'Deleted');
+              })
+              .catch(err=>{
+                console.error('削除エラー:', err);
+                alert('削除エラー: ' + err.message);
+              });
+          });
   }); // end requestAuth
 };
 
