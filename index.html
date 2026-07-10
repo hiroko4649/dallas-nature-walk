@@ -81,7 +81,12 @@
     .no-results { text-align:center; padding:3rem; color:var(--lt); font-style:italic; grid-column:1/-1; }
 
     /* CARD */
-    .card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.06); border-top:4px solid; overflow:hidden; transition:transform .2s,box-shadow .2s; }
+    .card { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.06); border-top:4px solid; overflow:hidden; transition:transform .2s,box-shadow .2s; cursor:pointer; }
+    .card-detail { display:none; }
+    .card.expanded .card-detail { display:block; }
+    .card-toggle { text-align:center; font-size:.7rem; color:var(--lt); padding:.3rem 0 .2rem; }
+    .card.expanded .toggle-open { display:none; }
+    .card:not(.expanded) .toggle-close { display:none; }
     .card:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,0,0,.1); }
     .card.flower { border-top-color:var(--gm); }
     .card.bird   { border-top-color:var(--bm); }
@@ -670,7 +675,7 @@ function makeCard(e,i){
 
   const photosJSON = JSON.stringify(photos).replace(/"/g,'&quot;');
   return `
-<div class="card ${e.category||'flower'}" id="card-${e._id}" style="animation:mIn .3s ${delay}s ease both">
+<div class="card ${e.category||'flower'}" id="card-${e._id}" style="animation:mIn .3s ${delay}s ease both" onclick="toggleCard(this,event)">
   <div class="photo-wrap" id="pw-${e._id}">
     ${img
       ?`<img src="${img}" alt="${e.jp||''}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
@@ -687,6 +692,8 @@ function makeCard(e,i){
     </div>
     <div class="name-sci">${e.sci||''}</div>
   </div>
+  <div class="card-toggle"><span class="toggle-open">▼ 詳細を見る</span><span class="toggle-close">▲ 閉じる</span></div>
+  <div class="card-detail">
   <div class="card-body">
     ${rows.map(r=>`<div class="info-row"><span class="info-lbl">${r.l||''}</span><span class="info-txt">${r.t||''}</span></div>`).join('')}
     ${hl?`<div class="card-hl">💡 ${hl}</div>`:''}
@@ -700,6 +707,7 @@ function makeCard(e,i){
       <button class="btn-edit" onclick="openEdit('${e._id}')">${s.edit}</button>
       <button class="btn-del"  onclick="askDel('${e._id}','${(e.jp||'').replace(/'/g,'&#39;')}')">${s.del}</button>
     </div>
+  </div>
   </div>
 </div>`;
 }
@@ -719,6 +727,16 @@ window.pNav=function(id,dir,total,photosStr){
 };
 
 /* ── FILTER / SORT / SEARCH ── */
+window.toggleCard=function(card, e){
+  // Don't toggle when clicking edit/delete buttons or carousel buttons
+  if(e.target.closest('.btn-edit,.btn-del,.photo-nav,.photo-dots')) return;
+  card.classList.toggle('expanded');
+};
+
+window.toggleCard=function(card,e){
+  if(e.target.closest('.btn-edit,.btn-del,.pnav,.pctr')) return;
+  card.classList.toggle('expanded');
+};
 window.setCat=function(c){ cat=c; ['all','flower','bird','food','other'].forEach(x=>{const el=document.getElementById('cat-'+x);if(el){el.classList.toggle('active',x===c);}}); render(); };
 window.setArea=function(a){ area=a; render(); };
 window.setMonth=function(v){ monthFilter=v; render(); };
